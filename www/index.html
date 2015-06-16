@@ -16,7 +16,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="generator" content="Polymer Starter Kit" />
-  <title>Polymer Starter Kit</title>
+  <title>Vehicular Grand Larceny</title>
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
   <!-- Chrome for Android theme color -->
@@ -52,6 +52,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <!-- will be replaced with elements/elements.vulcanized.html -->
   <link rel="import" href="elements/elements.html">
+  <!-- <link rel="import" href="bower_components/three-viewport/three-quad-viewport.html"> -->
   <!-- endreplace-->
 </head>
 
@@ -77,6 +78,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <a data-route="users" href="/users">
             <iron-icon icon="info"></iron-icon>
             <span>Users</span>
+          </a>
+
+          <a data-route="three" href="/three">
+            <iron-icon icon="star"></iron-icon>
+            <span>Three</span>
+            <!-- <three-quad-viewport fit></three-quad-viewport> -->
           </a>
 
           <a data-route="contact" href="/contact">
@@ -147,6 +154,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <h2 class="paper-font-display2">Users</h2>
                 <p>This is the users section</p>
                 <a href="/users/Rob">Rob</a>
+              </paper-material>
+            </section>
+
+            <section data-route="three">
+              <paper-material elevation="1">
+                <p>This is the Three section</p>
               </paper-material>
             </section>
 

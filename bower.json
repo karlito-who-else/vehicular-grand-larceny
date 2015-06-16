@@ -1,34 +1,35 @@
 {
-	"name": "vehicular-grand-larceny",
-	"description": "Vehicular Grand Larceny",
-	"version": "0.1.0",
-	"homepage": "http://code.primeordinal.com/wordpress/vehicular-grand-larceny",
-	"author": {
-		"name": "Prime Ordinal",
-		"email": "admin@primeordinal.com",
-		"url": "http://primeordinal.com"
-	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/primeordinal/vehicular-grand-larceny"
-	},
-	"bugs": {
-		"url": "https://github.com/primeordinal/vehicular-grand-larceny/issues"
-	},
-	"dependencies": {
-		"detectizr": "^2.0.0",
-		"imagesloaded": "^3.1.8",
-		"iron-elements": "PolymerElements/iron-elements#1.0.0",
-		"paper-elements": "PolymerElements/paper-elements#1.0.1",
-		"platinum-elements": "PolymerElements/platinum-elements#1.0.1",
-		"neon-elements": "PolymerElements/neon-elements#1.0.0",
-		"page": "visionmedia/page.js#~1.6.3",
-		"polymer": "Polymer/polymer#^1.0.0"
-	},
-	"devDependencies": {
-		"bootstrap-sass": "^3.3.4",
-		"font-awesome": "^4.1.0",
-		"test-fixture": "PolymerElements/test-fixture#^1.0.0",
-		"web-component-tester": "*"
-	}
+  "name": "vehicular-grand-larceny",
+  "description": "Vehicular Grand Larceny",
+  "version": "0.1.0",
+  "homepage": "http://code.primeordinal.com/wordpress/vehicular-grand-larceny",
+  "author": {
+    "name": "Prime Ordinal",
+    "email": "admin@primeordinal.com",
+    "url": "http://primeordinal.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/primeordinal/vehicular-grand-larceny"
+  },
+  "bugs": {
+    "url": "https://github.com/primeordinal/vehicular-grand-larceny/issues"
+  },
+  "dependencies": {
+    "detectizr": "^2.0.0",
+    "imagesloaded": "^3.1.8",
+    "iron-elements": "PolymerElements/iron-elements#1.0.0",
+    "paper-elements": "PolymerElements/paper-elements#1.0.1",
+    "platinum-elements": "PolymerElements/platinum-elements#1.0.1",
+    "neon-elements": "PolymerElements/neon-elements#1.0.0",
+    "page": "visionmedia/page.js#~1.6.3",
+    "polymer": "Polymer/polymer#^1.0.0",
+    "three-viewport": "~0.5.2"
+  },
+  "devDependencies": {
+    "bootstrap-sass": "^3.3.4",
+    "font-awesome": "^4.1.0",
+    "test-fixture": "PolymerElements/test-fixture#^1.0.0",
+    "web-component-tester": "*"
+  }
 }
