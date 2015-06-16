@@ -11,4 +11,4 @@ find www -type d -exec chmod 755 {} \;
 find www -type f -exec chmod 644 {} \;
 chmod g+w www/.htaccess
 
-mkdir -p www/wp-content/themes/vehicular-grand-larceny/styleguide/templates && cp -r node_modules/gulp-dss/templates www/wp-content/themes/vehicular-grand-larceny/styleguide
+mkdir -p www/styleguide && cp -r node_modules/gulp-dss/templates www/styleguide
