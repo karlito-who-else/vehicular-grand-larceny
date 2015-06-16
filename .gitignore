@@ -12,6 +12,6 @@ npm-debug.log
 pids/*
 scss-lint-report.xml
 uploads/*
-www/bower_components/*
+bower_components/*
 www/vendor/*
 www/uploads/*

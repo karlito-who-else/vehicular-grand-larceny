@@ -12,9 +12,10 @@ var sourcemaps = require('gulp-sourcemaps');
 var util = require('gulp-util');
 
 var config = require(__dirname + '/_config');
+var instance = require(__dirname + '/_instance');
 
 gulp.task('styles', function() {
-  return gulp.src(config.files.styles)
+  gulp.src(config.files.styles) // stream not returned, see https://github.com/dlmanning/gulp-sass/wiki/Common-Issues-and-Their-Fixes#gulp-watch-stops-working-on-an-error
     .pipe(cache('styles')) // only pass through changed files
     .pipe(sourcemaps.init())
     .pipe(
@@ -24,9 +25,8 @@ gulp.task('styles', function() {
           config.path.nodeModules,
           config.path.styles
         ]
-      }, {
-        errLogToConsole: true
       })
+      .on('error', sass.logError)
     )
     .pipe(autoprefixer())
     .pipe(csscomb())
@@ -40,7 +40,9 @@ gulp.task('styles', function() {
     // }))
     .pipe(remember('styles')) // add back all files to the stream
     .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest(config.path.base))
+    .pipe(gulp.dest(config.path.styles))
+    .pipe(instance.browserSync.stream({match: '**/*.css'}))
+    // .pipe(instance.browserSync.reload({stream: true}))
     .on('error', util.log);
 });
 

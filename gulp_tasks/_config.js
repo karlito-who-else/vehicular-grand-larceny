@@ -10,8 +10,6 @@ config.files = {};
 config.path = {};
 config.port = {};
 
-config.theme = 'vehicular-grand-larceny';
-
 // Paths
 config.path.base = path.normalize(__dirname + '/../www');
 config.path.nodeModules = path.normalize(__dirname + '/../node_modules');
@@ -33,17 +31,27 @@ config.browsersync = {
   browser: ['google chrome'],
   files: [
     config.path.base + '/**',
-    '!' + config.path.base + '/**.map'
+    '!' + config.files.styles,
+    '!' + config.path.base + '/**/*.map'
   ],
-  notify: false,
+  notify: true,
   open: false,
   port: manifest.config.server.browsersync.port,
   proxy: 'http://localhost:' + process.env.PORT ? process.env.PORT : manifest.config.server.http.port,
-  server: 'www',
+  server: {
+    baseDir: ['.tmp', 'www'],
+    routes: {
+      '/bower_components': 'bower_components'
+    }
+  },
   snippetOptions: {
     rule: {
       match: '<span id="browser-sync-binding"></span>',
       fn: function(snippet) {
+        // temporary workaround below as browser-sync 2.7.11 tries to inject
+        // the client with an incorrect version number appended to the filename
+        snippet = '<script async src="/browser-sync/browser-sync-client.js"></script>';
+        console.log(snippet);
         return snippet;
       }
     }

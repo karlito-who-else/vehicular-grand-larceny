@@ -14,7 +14,7 @@ gulp.task('scripts', function() {
     // .pipe(modernizr())
     .pipe(uglify())
     .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest(config.path.base))
+    .pipe(gulp.dest(config.path.scripts))
     .on('error', util.log);
 });
 
