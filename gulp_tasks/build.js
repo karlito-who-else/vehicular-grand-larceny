@@ -5,6 +5,7 @@ gulp.task(
     'markup',
     'scripts',
     'styles',
+    'precache',
     'styleguide'
   ]
 );

@@ -2,6 +2,7 @@
 
 var gulp = require('gulp');
 // var modernizr = require('gulp-modernizr');
+var rename = require('gulp-rename');
 var sourcemaps = require('gulp-sourcemaps');
 var uglify = require('gulp-uglify');
 var util = require('gulp-util');
@@ -14,6 +15,9 @@ gulp.task('scripts', function() {
     // .pipe(modernizr())
     .pipe(uglify())
     .pipe(sourcemaps.write('./maps'))
+    .pipe(rename(function(path) {
+      path.extname = '-min.js';
+    }))
     .pipe(gulp.dest(config.path.scripts))
     .on('error', util.log);
 });
