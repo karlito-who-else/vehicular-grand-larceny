@@ -1,0 +1,21 @@
+:host {
+  position: relative;
+}
+:host > .io-editor {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+:host > .io-editor:focus[contenteditable] {
+  text-overflow: inherit;
+  cursor: text;
+}
+:host > .io-editor:empty {
+  min-width: 0.5em;
+  cursor: text;
+}
+/* TODO: make work on Firefox */
+:host > .io-editor:empty:after {
+  content: "{{placeholder}}";
+  opacity: 0.25;
+}

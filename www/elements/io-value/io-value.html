@@ -1,0 +1,207 @@
+<!--
+Custom input element for any data type. Once the value is set, this element will insert appropriate input element into its shadow DOM and bind the `value` attribute to it.
+
+Right clicking on the value edits the value as untyped string.
+
+Supported input types are: `io-boolean`, `io-number`, `io-string` and `io-object`
+
+__Note__: For attributes and detailed information see `io-boolean`, `io-number`, `io-string` and `io-object`
+
+@element io-value
+@homepage https://github.com/arodic/io-value
+@demo http://akirodic.com/components/io-value/demo.html
+@blurb A collection of Polymer elements for various data types.
+@status alpha
+-->
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="io-boolean.html">
+<link rel="import" href="io-boolean-icon.html">
+<link rel="import" href="io-number.html">
+<link rel="import" href="io-string.html">
+<link rel="import" href="io-object.html">
+
+<dom-module id="io-value" class="horizontal layout">
+  <template>
+    <content id="content"></content>
+    <span id="editor" style="position: relative'" class="flex"></span>
+  </template>
+  <script type="text/javascript">
+  (function() {
+    function isJson(str) {
+      try {
+        JSON.parse(str);
+      } catch (e) {
+        return false;
+      }
+      return true;
+    }
+    var range = document.createRange();
+    var sel, value;
+    Polymer({
+      is: 'io-value',
+      publish: {
+        /**
+         * Input value.
+         *
+         * @attribute value
+         * @type any
+         * @default null
+         */
+        value: null,
+        /**
+         * Determines if the input can be edited by user action.
+         *
+         * @attribute disabled
+         * @type boolean
+         * @default false
+         */
+        disabled: {value: false, reflect: true},
+        /**
+         * Expanded state
+         * Uses CSS attribute selector.
+         *
+         * @attribute expanded
+         * @type boolean
+         * @default false
+         */
+        expanded: {value: false, reflect: true},
+        /**
+         * If set, the element uses core-list for its items.
+         * To use core-list you must set element height explicitly.
+         *
+         * @attribute corelist
+         * @type boolean
+         * @default false
+         */
+        corelist: false
+      },
+      ioElement: null,
+      ioElementName: null,
+      eventDelegates: {
+        'value-set': 'valueSet',
+        'contextmenu': 'contextmenuAction'
+      },
+      domReady: function() {
+        if (this.value === undefined || this.value === null) {
+          if (!this.ioElement) this.valueChanged();
+        }
+      },
+      valueChanged: function() {
+        // Set empty string editor for undefined/null/NaN
+        // with placeholder identifying the value type
+        if (this.value === undefined) {
+          this.setIoElement('io-string');
+          this.ioElement.placeholder = 'undefined';
+          this.ioElementName = 'io-undefined';
+        } else if (this.value === null) {
+          this.setIoElement('io-string');
+          this.ioElement.placeholder = 'null';
+          this.ioElementName = 'io-null';
+        } else if (this.value === NaN) {
+          this.setIoElement('io-string');
+          this.ioElement.placeholder = 'NaN';
+          this.ioElementName = 'io-NaN';
+        // Special editors for objects, functions, boolean, numbers and strings.
+        } else if (typeof this.value === 'object') {
+          this.setIoElement('io-object');
+        } else if (typeof this.value === 'function') {
+          // this.setIoElement('io-function'); // TODO: function
+        } else if (typeof this.value === 'boolean') {
+          this.setIoElement('io-boolean');
+        } else if (typeof this.value === 'number') {
+          this.setIoElement('io-number');
+        } else if (typeof this.value === 'string') {
+          this.setIoElement('io-string');
+        }
+      },
+      valueSet: function(event) {
+        // String type values have multiple special cases that convert to different types.
+        value = this.ioElement.value;
+        if (event.path[0] === this.ioElement && typeof value === 'string') {
+          if (!isNaN(value) && value !== '') {
+            this.value = parseFloat(value);
+          } else if (value === 'true') {
+            this.value = true;
+          } else if (value === 'false') {
+            this.value = false;
+          } else if (value === 'null') {
+            this.value = null;
+          } else if (value === 'undefined') {
+            this.value = undefined;
+          } else if (value === 'NaN') {
+            this.value = NaN;
+          } else if (isJson(value)) {
+            this.value = JSON.parse(value);
+          } else {
+            this.value = value;
+          }
+          this.valueChanged();
+        }
+      },
+      contextmenuAction: function(event) {
+        if (this.disabled) return;
+        event.preventDefault();
+        event.stopPropagation();
+        this.editValue();
+      },
+      /**
+       * Creates an untyped string value editor and selects its contents.
+       * Does not work with object values.
+       *
+       * @method editValue
+       */
+      editValue: function() {
+        if (this.ioElement.$.value.localName === 'io-object') return;
+        this.removeIoElement();
+        this.ioElement = document.createElement('io-string');
+        this.ioElement.classList.toggle('value-editor', true);
+        this.shadowRoot.appendChild(this.ioElement);
+        this.ioElementName = 'value-editor';
+        this.ioElement.value = String(this.value);
+        this.async(function() {
+          range.selectNodeContents(this.ioElement.$.value);
+          sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+        }.bind(this));
+        this.ioElement.addEventListener('blur', function(event) {
+          if (String(this.ioElement.value) !== String(this.value)) {
+            this.valueSet({path: [this.ioElement]});
+            this.valueChanged();
+          };
+        }.bind(this), false);
+      },
+      setIoElement: function(ioElementName) {
+        if (this.ioElementName === ioElementName) return;
+        this.removeIoElement();
+        this.ioElement = document.createElement(ioElementName);
+        this.$.editor.appendChild(this.ioElement);
+        this.ioElement.appendChild(this.$.content);
+        this.ioElement.bindProperty('value', new PathObserver(this, 'value'));
+        this.ioElement.bindProperty('disabled', new PathObserver(this, 'disabled'));
+        this.ioElement.bindProperty('expanded', new PathObserver(this, 'expanded'));
+        this.ioElement.bindProperty('corelist', new PathObserver(this, 'corelist'));
+        this.corelistChanged();
+        this.ioElement.immediateValue = this.value;
+        this.ioElementName = ioElementName;
+      },
+      corelistChanged: function() {
+        if (!this.ioElement) return;
+        if (this.corelist) {
+          this.ioElement.setAttribute('fit', '');
+        } else {
+          this.ioElement.removeAttribute('fit');
+        }
+      },
+      removeIoElement: function() {
+        if (this.ioElement) {
+          this.ioElement.unbindAll(); // TODO: Maybe unnecessary;
+          this.ioElement.removeChild(this.$.content);
+          this.$.editor.removeChild(this.ioElement);
+        }
+      }
+    });
+  }());
+  </script>
+</dom-module>

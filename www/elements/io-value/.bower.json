@@ -1,0 +1,38 @@
+{
+  "name": "io-value",
+  "version": "0.9.8",
+  "homepage": "https://github.com/arodic/io-value",
+  "authors": [
+    "Aleksandar Rodic <aleksandar.xyz@gmail.com>"
+  ],
+  "description": "A collection of I/O custom elements for various data types",
+  "main": "io-value.html",
+  "keywords": [
+    "input",
+    "output",
+    "i/o",
+    "io",
+    "ui",
+    "polymer",
+    "element",
+    "web-components"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#~0.5.4",
+    "core-icons": "Polymer/core-icons#~0.5.5",
+    "core-list": "Polymer/core-list#~0.5.5"
+  },
+  "_release": "0.9.8",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.9.8",
+    "commit": "023d19c661f9914efd5d4881fb7c431350f84f0b"
+  },
+  "_source": "git://github.com/arodic/io-value.git",
+  "_target": "~0.9.8",
+  "_originalSource": "arodic/io-value"
+}

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>io-value demo</title>
+  <script src="../webcomponentsjs/webcomponents-lite.min.js"></script>
+  <link rel="import" href="../polymer/polymer.html">
+  <link rel="import" href="io-boolean-icon.html">
+  <link rel="import" href="io-boolean.html">
+  <link rel="import" href="io-number.html">
+  <link rel="import" href="io-string.html">
+  <link rel="import" href="io-object.html">
+  <link rel="import" href="io-value.html">
+  <style type="text/css">
+    html {
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
+    body{
+      font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: #ddd;
+    }
+  </style>
+</head>
+<body unresolved fullbleed>
+  <demo-app fit></demo-app>
+  <polymer-element name="demo-app">
+    <template>
+      <io-object expanded value="{{value}}" corelist fit></io-object>
+    </template>
+    <script>
+      Polymer({
+        value: [true, 1337, 'hello string', {answer: 42}, undefined, null, NaN]
+      })
+    </script>
+  </polymer-element>
+</body>
+</html>

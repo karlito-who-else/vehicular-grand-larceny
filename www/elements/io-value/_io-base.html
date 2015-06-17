@@ -1,0 +1,66 @@
+<!--
+Base for io-value input elements
+
+@element io-base
+@homepage https://github.com/arodic/io-value
+@demo http://akirodic.com/components/io-value/demo.html
+@blurb Base for generic io-value input elements
+@status alpha
+-->
+<link rel="import" href="../polymer/polymer.html">
+
+<dom-module id="io-base">
+  <script>
+    Polymer({
+      is: 'io-base',
+      publish: {
+        /**
+         * Element value.
+         *
+         * @attribute value
+         * @type any
+         * @default null
+         */
+        value: null,
+        /**
+         * Determines if the input can be focused and edited by user action.
+         *
+         * @attribute disabled
+         * @type boolean
+         * @default false
+         */
+        disabled: {value: false, reflect: true},
+      },
+      /**
+       * Helper method used used to fire 'value-set' event.
+       *
+       * @method fireValueSet
+       */
+      setValue: function(value) {
+        if (value === this.value) return;
+        var oldValue = this.value;
+        this.value = value;
+        /**
+         * Fired when an value attribute is set by user action.
+         * This method should only be invoked from functions triggered by user action.
+         *
+         * @event value-set
+         * @param {Object} detail
+         * @param {Object} detail.element the input element where value was set.
+         * @param {Object} detail.value new value.
+         * @param {Object} detail.oldValue old value.
+         */
+        this.fire('value-set', {element: this, value: this.value, oldValue: oldValue});
+      },
+      disabledChanged: function() {
+        if (this.disabled) {
+          this.$.value.removeAttribute('tabindex');
+          this.setAttribute('aria-disabled', '');
+        } else {
+          this.$.value.setAttribute('tabindex', 0);
+          this.removeAttribute('aria-disabled');
+        }
+      }
+    });
+  </script>
+</dom-module>

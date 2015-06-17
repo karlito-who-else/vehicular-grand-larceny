@@ -1,0 +1,22 @@
+{
+  "name": "io-options",
+  "version": "0.9.8",
+  "homepage": "https://github.com/arodic/io-options",
+  "authors": [
+    "Aleksandar Rodic <aleksandar.xyz@gmail.com>"
+  ],
+  "description": "Custom Polymer element for option-select input.",
+  "main": "io-options.html",
+  "keywords": [
+    "options", "dropdown", "select", "ui", "polymer", "element", "web-components"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#~0.5.4",
+    "io-menu": "arodic/io-menu#~0.9.8",
+    "io-value": "arodic/io-value#~0.9.8"
+  }
+}

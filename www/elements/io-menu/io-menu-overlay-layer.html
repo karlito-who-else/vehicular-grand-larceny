@@ -1,0 +1,26 @@
+<!--
+Extension of core-overlay-layer designed for io-menu
+addElement and removeElement methods are extended to preserve menu location and parent's layout when
+adding/remvinf io-menu elements to overlay.
+
+@element io-menu-overlay-layer
+@extends core-overlay-layer
+@status alpha
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../core-overlay/core-overlay-layer.html">
+
+<dom-module id="io-menu-overlay-layer" extends="core-overlay-layer" oncontextmenu="return false;">
+<template>
+  <link href="io-menu-overlay-layer.css" rel="stylesheet" type="text/css" shim-shadowdom>
+  <shadow></shadow>
+</template>
+<script>
+  Polymer({
+    is: 'io-menu-overlay-layer',
+    addElement: function(element) {
+      this.super(arguments);
+    }
+  });
+</script>
+</dom-module>

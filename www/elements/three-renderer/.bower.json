@@ -1,0 +1,38 @@
+{
+  "name": "three-renderer",
+  "version": "0.5.2",
+  "homepage": "https://github.com/arodic/three-renderer",
+  "authors": [
+    "Aleksandar Rodic <aleksandar.xyz@gmail.com>"
+  ],
+  "description": "Element wrapper for the THREE.WebGLRenderer.",
+  "main": "three.html",
+  "keywords": [
+    "threejs",
+    "three",
+    "three.js",
+    "3d",
+    "renderer",
+    "webgl",
+    "polymer",
+    "element",
+    "web-components"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#~0.5.4",
+    "three-js": "arodic/three-js#~0.5.2"
+  },
+  "_release": "0.5.2",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.5.2",
+    "commit": "19a9f66efe63b06a197819114215f3da9b1ea595"
+  },
+  "_source": "git://github.com/arodic/three-renderer.git",
+  "_target": "~0.5.2",
+  "_originalSource": "arodic/three-renderer"
+}

@@ -1,0 +1,378 @@
+<!--
+I/O web component for Object data type.
+
+    <io-object value="[0,1,"apple",false]" expanded disabled ironlist></io-object>
+
+@element io-object
+@homepage https://github.com/arodic/io-value
+@demo http://akirodic.com/components/io-value/demo.html
+@blurb I/O web component for Object data type.
+@status alpha
+-->
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../iron-list/iron-list.html">
+<link rel="import" href="../iron-icons/iron-icons.html">
+
+<link rel="import" href="io-boolean.html">
+<link rel="import" href="io-boolean-icon.html">
+<link rel="import" href="io-string.html">
+<link rel="import" href="io-number.html">
+<link rel="import" href="io-value.html">
+
+<dom-module id="io-object" oncontextmenu="return false;" class"vertical layout">
+  <style type="text/css" is="custom-style">
+    :host {
+      display: block;
+      height: auto;
+    }
+    #io-properties {
+      overflow-x: hidden;
+      overflow-y: auto;
+      margin-left: 1em;
+    }
+    iron-list > div {
+      display: inline-block;
+      padding-left: 0.5em;
+    }
+    .io-constructor {
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .io-constructor-name {
+      font-style: italic;
+      font-weight: bold;
+    }
+    .io-constructor-length {
+    }
+    .io-key {
+      vertical-align: top;
+      margin-right: 0.25em;
+      color: rgb(140, 13, 150);
+      cursor: pointer;
+    }
+    io-value {
+      cursor: text;
+    }
+    .io-spacer {
+      width: 1.2em;
+      height: 1.2em;
+      cursor: pointer;
+    }
+    .io-spacer:not(:hover) {
+      opacity: 0;
+    }
+    :host([disabled]) .io-spacer {
+      display: none;
+    }
+    io-value::shadow io-string:not(.value-editor)::shadow .io-editor:not(:empty)::after,
+    io-value::shadow io-string:not(.value-editor)::shadow .io-editor:not(:empty)::before {
+      content: '"';
+    }
+    io-value::shadow io-string:not(.value-editor) {
+      color: rgb(198, 22, 5);
+    }
+    io-value::shadow io-boolean,
+    io-value::shadow io-number {
+      color: rgb(25, 0, 211);
+    }
+    io-value::shadow io-object {
+      pointer-events: none;
+    }
+    io-value::shadow io-object::shadow * {
+      pointer-events: auto;
+    }
+  </style>
+  <template>
+    <span class="io-constructor">
+      <content></content>
+      <io-boolean-icon value="{{expanded}}" trueicon="expand-more" falseicon="chevron-right"></io-boolean-icon>
+      <span on-tap="{{toggleExpanded}}">
+        <span class="io-constructor-name">{{value.constructor.name}}</span>
+        <span class="io-constructor-length">[{{observedKeys.length}}]</span>
+      </span>
+    </span>
+    <div id="io-properties" flex?="{{ironlist}}">
+      <template if="{{expanded && ironlist}}">
+        <iron-list id="ironlist"
+            data="{{observedKeys}}"
+            scrollTarget="{{$['io-properties']}}"
+            height="18"
+            runwayFactor="2">
+          <template>
+            <div horizontal layout>
+              <io-value
+                  value="{{value[model.key]}}"
+                  key="{{model.key}}"
+                  expanded="{{model._expanded}}"
+                  on-keydown="{{valueKeydownAction}}"
+                  disabled="{{disabled}}">
+                <io-string class="io-key"
+                    value="{{model.key}}"
+                    key="{{model.key}}"
+                    on-value-set="{{keyChangedAction}}"
+                    on-keydown="{{keyKeydownAction}}"
+                    placeholder=""
+                    disabled="{{disabled}}">
+                </io-string>:
+              </io-value>
+              <iron-icon icon="add" class="io-spacer"
+                  key="{{model.key}}"
+                  on-tap="{{spacerTapAction}}">
+              </iron-icon>
+            </div>
+          </template>
+        </iron-list>
+      </template>
+
+      <template if="{{expanded && !ironlist}}">
+        <template repeat="{{model in observedKeys}}">
+          <div horizontal layout>
+            <io-value
+                value="{{value[model.key]}}"
+                key="{{model.key}}"
+                expanded="{{model._expanded}}"
+                on-keydown="{{valueKeydownAction}}"
+                disabled="{{disabled}}">
+              <io-string class="io-key"
+                  value="{{model.key}}"
+                  key="{{model.key}}"
+                  on-value-set="{{keyChangedAction}}"
+                  on-keydown="{{keyKeydownAction}}"
+                  placeholder=""
+                  disabled="{{disabled}}">
+              </io-string>:
+            </io-value>
+            <iron-icon icon="add" class="io-spacer"
+                key="{{model.key}}"
+                on-tap="{{spacerTapAction}}">
+            </iron-icon>
+          </div>
+        </template>
+      </template>
+    </div>
+  </template>
+  <script type="text/javascript">
+  (function() {
+    var i, index, keys, key, item, rect, oldKey, newKey, value;
+    var parent, sibling, editor, range, selection;
+    var indexInObservedKeys = function(observedKeys, key) {
+      for (i = 0; i < observedKeys.length; i++) {
+        if (observedKeys[i].key === key) return i;
+      }
+      return -1;
+    };
+    Polymer({
+      is: 'io-object',
+      publish: {
+        /**
+         * Input value.
+         *
+         * @attribute value
+         * @type object | array
+         * @default null
+         */
+        value: null,
+        /**
+         * Determines if the input can be edited by user action.
+         *
+         * @attribute disabled
+         * @type boolean
+         * @default false
+         */
+        disabled: {value: false, reflect: true},
+        /**
+         * Expanded state.
+         *
+         * @attribute expanded
+         * @type boolean
+         * @default false
+         */
+        expanded: {value: false, reflect: true},
+        /**
+         * If set, the element uses iron-list for its items.
+         * To use iron-list you must set element height explicitly.
+         *
+         * @attribute ironlist
+         * @type boolean
+         * @default false
+         */
+        ironlist: false
+      },
+      ready: function() {
+        /**
+         * Bubbled up value-set event with top-most io-object value appended.
+         *
+         * @event value-set
+         * @param {Object} detail
+         * @param {Object} detail.element original input element where value was set.
+         * @param {Object} detail.value new value.
+         * @param {Object} detail.objectElement top-most io-object element.
+         * @param {Object} detail.objectValue top-most io-object value.
+         */
+        this.shadowRoot.addEventListener('value-set', function(event) {
+          event.stopPropagation();
+          this.fire('value-set', {
+            element: this,
+            value: this.value
+          });
+        }.bind(this));
+
+      },
+      /**
+       * Deletes object property or array element with specified key/index.
+       *
+       * @method deleteProperty
+       * @param {string} key key/index to delete.
+       */
+      deleteProperty: function(key) {
+        // TODO: offset expanded states for arrays
+        if (this.value instanceof Array) {
+          if (Number(key) > 0 && Number(key) < this.value.length) {
+            this.value.splice(Number(key), 1);
+          }
+        } else {
+          delete this.value[key];
+        }
+        this.fire('iron-resize');
+      },
+      /**
+       * Adds object property or array element at specified key/index.
+       *
+       * @method addProperty
+       * @param {string} key key/index to add.
+       * @param {any} value value to after property or element has been added.
+       * @param {boolean} focus if set, intput field gets focused after it has been cleared.
+       */
+      addProperty: function(key, value, focus) {
+        // TODO: offset expanded states for arrays
+        if (this.value instanceof Array) {
+          key = parseFloat(key) + 1;
+          this.value.splice(key, 0, null);
+          this.async(function() {
+            this.async(function() {
+              item = this.shadowRoot.querySelector('io-value[key="' + key + '"]');
+              item.ioElement.$.value.focus();
+            }.bind(this));
+          }.bind(this));
+        } else {
+          key = '_';
+          this.value[key] = null;
+          if (focus) {
+            this.async(function() {
+              item = this.shadowRoot.querySelector('io-string[key="' + key + '"]');
+              this.async(function() {
+                item.immediateValue = '';
+                item.$.value.innerHTML = '';
+                item.$.value.focus();
+              }.bind(this));
+            }.bind(this));
+          }
+        }
+        this.fire('iron-resize');
+      },
+      keyChangedAction: function(event) {
+        oldKey = String(event.detail.oldValue);
+        newKey = String(event.detail.value);
+        if (oldKey === newKey) return;
+        event.stopPropagation();
+        this.async(function() {
+          event.path[0].value = oldKey;
+          if (newKey === '') {
+            this.deleteProperty(oldKey);
+            this.fire('value-set', {
+              element: this,
+              value: this.value
+            });
+            return;
+          }
+          if (this.value instanceof Array) {
+            if (isNaN(Number(newKey))) {
+              return;
+            }
+            var value = this.value[Number(oldKey)];
+            this.value.splice(Number(oldKey), 1);
+            this.value.length = Math.max(this.value.length, Number(newKey));
+            this.fire('value-set', {
+              element: this,
+              value: this.value
+            });
+            this.async(function() {
+              this.value.splice(Number(newKey), 0, value);
+            }.bind(this));
+          } else {
+            value = this.value[oldKey];
+            this.deleteProperty(oldKey);
+            this.value[newKey] = value;
+            this.fire('value-set', {
+              element: this,
+              value: this.value
+            });
+          }
+          this.fire('iron-resize');
+        }.bind(this));
+
+      },
+      // TODO: implement API for object editing/navigation commands.
+      keyKeydownAction: function(event) {
+      },
+      valueKeydownAction: function(event) {
+      },
+      // adds property
+      spacerTapAction: function(event) {
+        if (this.disabled) return;
+        event.stopPropagation();
+        event.preventDefault();
+        this.addProperty(event.path[0].getAttribute('key'), undefined, true);
+      },
+      toggleExpanded: function() {
+        this.expanded = !this.expanded;
+      },
+      expandedChanged: function() {
+        if (this.expanded && this.observedKeys && this.observedKeys.length === 0) {
+          this.addProperty(-1, undefined, true);
+        }
+      },
+      valueChanged: function() {
+        if (!this.value || typeof this.value !== 'object') return;
+        if (this.keyObserver) {
+          this.keyObserver.close();
+          delete this.keyObserver;
+        }
+        if (this.value instanceof Array) {
+          // Array change is handled manually by syncing keys.
+          this.observedKeys = this.observedKeys || [];
+          this.observedKeys.length = this.value.length;
+          for (i = 0; i < this.value.length; i++) {
+            this.observedKeys[i] = this.observedKeys[i] || {};
+            this.observedKeys[i].key = i;
+            // TODO:  handle _expanded state when array item shifts to a different index.
+          }
+        } else {
+          // Object change is handled by object observer
+          this.observedKeys = [];
+          keys = Object.keys(this.value);
+          for (i in keys) {
+            this.observedKeys.push({key: keys[i]});
+          }
+          this.keyObserver = new ObjectObserver(this.value);
+          this.keyObserver.open(function(added, removed, changed, getOldValueFn) {
+            for (key in added) {
+              index = indexInObservedKeys(this.observedKeys, key);
+              if (index === -1) {
+                this.observedKeys.push({key: key});
+              }
+            }
+            for (key in removed) {
+              index = indexInObservedKeys(this.observedKeys, key);
+              if (index !== -1) {
+                this.observedKeys.splice(index, 1);
+              }
+            }
+          }, this);
+        }
+      }
+    });
+  }());
+  </script>
+</dom-module>

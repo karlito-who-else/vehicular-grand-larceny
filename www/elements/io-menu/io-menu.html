@@ -1,0 +1,596 @@
+<!--
+Nested menu with touch support and a simple API.
+
+Example:
+
+    <io-menu options="options"></io-menu>
+
+`options` attribute is an array with option attributes and suboptions:
+
+    options = [
+      { label: "Options", options: [
+        { label: "Option1", options: [
+          { label: "Suboption1", action: function() {} },
+          { label: "Suboption2", action: someFunction,
+          { label: "Suboption3", action: otherFunction, arguments: ['argument'] }
+        ] }
+      }
+    ]
+
+@element io-menu
+@homepage https://github.com/arodic/io-menu
+@demo http://akirodic.com/components/io-menu/demo.html
+@blurb A custom Polymer menu with a simple API and lots of customization options.
+@status alpha
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../io-value/io-string.html">
+
+<link rel="import" href="io-menu-option.html">
+<link rel="import" href="io-menu-overlay-layer.html">
+
+<dom-module id="io-menu" tabindex="0" oncontextmenu="return false;">
+  <link href="io-menu.css" rel="stylesheet" type="text/css" is="custom-style">
+  <template>
+    <template if="{{tooltip}}">
+      <div id="tooltip">{{tooltip}}</div>
+    </template>
+    <io-string style="display: {{search ? 'block' : 'none'}}" id="search"
+      updateImmediate
+      value="{{searchString}}"
+      on-keydown="{{onSearchKeyUp}}">
+    </io-string>
+    <template if="{{expanded}}">
+      <template if="{{search}}">
+        <hr />
+      </template>
+      <div id="optionsWrapper">
+        <template repeat="{{option in currentOptions}}">
+          <template if="{{option.type == 'divider'}}"><hr /></template>
+          <template if="{{option.type != 'divider'}}">
+            <io-menu-option
+              options="{{option.options}}"
+              label="{{option.label}}"
+              secondaryLabel="{{option.secondaryLabel}}"
+              icon="{{option.icon}}"
+              action="{{option.action}}"
+              button="{{option.button}}"
+              arguments="{{option.arguments}}"
+              disabled="{{option.disabled}}"
+              keepOpen="{{option.keepOpen}}"
+              tooltip="{{option.tooltip}}">
+            </io-menu-option>
+          </template>
+        </template>
+      </div>
+    </template>
+  </template>
+  <script type="text/javascript">
+  (function() {
+    var x = 0, y = 0, v = 0, tempV, tempX, tempY;
+    var previousOption;
+    var previousParent;
+    var timeout;
+    var hoveredMenu;
+
+    var overlayLayer = document.createElement('io-menu-overlay-layer');
+
+    /**
+     * Fired when menu action is executed.
+     *
+     * @event io-menu-option-clicked
+     * @param {Object} menu
+     */
+
+    Polymer({
+      is: 'io-menu',
+      publish: {
+
+        /**
+         * Array of item objects.
+         *
+         * @attribute options
+         * @type array
+         * @default []
+         */
+        options: null,
+
+        /**
+         * Expanded state
+         *
+         * @attribute expanded
+         * @type boolean
+         * @default true
+         */
+        expanded: {value: false, reflect: true},
+
+        /**
+         * Should the menu stay open when an action is selected/clicked?
+         *
+         * @attribute keepOpen
+         * @type boolean
+         * @default false
+         */
+        keepOpen: {value: false, reflect: true},
+
+        /**
+         * Number of milliseconds before swithcing options when cursor is moving sideways.
+         *
+         * @attribute holdTime
+         * @type number
+         * @default 500
+         */
+        holdTime: 500,
+
+        /**
+         * @attribute disabled
+         * @type boolean
+         * @default false
+         */
+        disabled: {value: false, reflect: true},
+
+        /**
+         * Should primary button activate the menu
+         *
+         * @attribute usePrimary
+         * @type boolean
+         * @default false
+         */
+        usePrimary: {value: false, reflect: true},
+
+        /**
+         * Should opening the menu require ctrl key to be pressed?
+         *
+         * @attribute ctrl
+         * @type boolean
+         * @default false
+         */
+        ctrl: {value: false, reflect: true},
+
+        /**
+         * TODO
+         */
+        search: {value: false, reflect: true},
+        searchString: '',
+        filteredOptions: [],
+
+        /**
+         * Tooltip to be displayed with the option
+         *
+         * @attribute tooltip
+         * @type string
+         * @default ''
+         */
+        tooltip: '',
+
+        /**
+         * Determines if the option list is sorted.
+         *
+         * @attribute sorted
+         * @type boolean
+         * @default false
+         */
+        sorted: {value: false, reflect: true},
+        sortedOptions: []
+      },
+
+      isSubmenu: false,
+      optionElems: null,
+      _parent: null,
+
+      eventDelegates: {
+        'touchstart': 'onDown',
+        'mousedown': 'onDown',
+        'mousemove': 'onHover',
+        'touchmove': 'onHover',
+        'io-menu-option-clicked': 'handleAction',
+        'io-change-option': 'onChangeOption'
+      },
+      computed: {
+        'currentOptions': '(filteredOptions.length ? filteredOptions : sortedOptions.length ? sortedOptions : options)'
+      },
+      ready: function() {
+        this._expand = this.expand.bind(this);
+        this._collapse = this.collapse.bind(this);
+        this._collapseFromOverlay = this.collapseFromOverlay.bind(this);
+        this._expandPrimary = this.expandPrimary.bind(this);
+        this._animate = this.animate.bind(this);
+      },
+      attached: function() {
+        if (!this._parent) {
+          this._parent =  this.parentNode.host || this.parentNode;
+        }
+        this._parent.addEventListener('contextmenu', this._expand);
+        this._parent.addEventListener('click', this._expandPrimary);
+      },
+      detached: function() {
+        this.stopAnimation();
+      },
+      startAnimation: function() {
+        this.playing = true;
+        this.animate();
+      },
+      stopAnimation: function() {
+        this.playing = false;
+      },
+      animate: function() {
+        if (!this.playing) return;
+        this.scroll();
+        requestAnimationFrame(this._animate);
+      },
+      onHover: function(event) {
+        event.stopPropagation();
+        var option = this.getHoveredItem(event);
+        hoveredMenu = this;
+        if (option && option != previousOption) {
+          this.expanded = true;
+          clearTimeout(timeout);
+          if (v > 0 || option.parentNode != previousParent) {
+            previousOption = option;
+            previousParent = option.parentNode;
+            this.expandOption(option);
+          } else {
+            timeout = setTimeout(function() {
+              previousOption = option;
+              previousParent = option.parentNode;
+              this.expandOption(option);
+            }.bind(this), this.holdTime);
+          }
+        }
+      },
+      onDown: function(event) {
+        this.expanded = true;
+        var option = this.getHoveredItem(event);
+        if (option) {
+          previousOption = option;
+          previousParent = option.parentNode;
+          this.expandOption(option);
+        }
+      },
+      getHoveredItem: function(event) {
+        event.stopPropagation();
+        if (event.changedTouches) event = event.changedTouches[0];
+
+        // var rect = this.getBoundingClientRect();
+        // console.log(rect.top, tempY);
+        // if (rect.top < 0 && tempY < 100) {
+        //   var style = window.getComputedStyle(this);
+        //   this.style.top = parseInt(style.top) + 2 + 'px';
+        // }
+
+        tempX = event.pageX - window.pageXOffset; // event.clientX
+        tempY = event.pageY - window.pageYOffset; // event.clientY
+
+        tempV = Math.abs(tempY - y) - Math.abs(tempX - x);
+        v = tempV;
+        x = tempX;
+        y = tempY;
+        //
+        this.updateOptionElems();
+        if (this.optionElems && this.optionElems.length) {
+          for (var i = 0; i < this.optionElems.length; i++) {
+            if (
+              this.optionElems[i].rect &&
+              this.optionElems[i].rect.left <= x &&
+              (this.optionElems[i].rect.left + this.optionElems[i].rect.width) >= x &&
+              this.optionElems[i].rect.top <= y &&
+              (this.optionElems[i].rect.top + this.optionElems[i].rect.height) >= y
+            ) {
+              return this.optionElems[i];
+            }
+          }
+        }
+      },
+
+      onSearchKeyUp: function(event) {
+        event.stopPropagation();
+        if (event.which == 38) {
+          this.fire('io-change-option', { option: this.$.search, key: 'last' });
+        } else if (event.which == 40) {
+          this.fire('io-change-option', { option: this.$.search, key: 'first' });
+        } else if (event.which == 9) {
+          this.fire('io-change-option', { option: this.$.search, key: 'first' });
+        } else if (event.which == 27) {
+          this.expanded = false;
+        }
+      },
+
+      onChangeOption: function(event) {
+        event.stopPropagation();
+
+        var scope = this;
+        var option = event.detail.option;
+        var display = window.getComputedStyle(option).getPropertyValue('display');
+
+        // Get access to the parent menu for this option.
+        // The search box isn't wrapped, so the parentMenu is one level up.
+        var menuEl = option.parentNode;
+        if (menuEl.id == 'optionsWrapper') {
+            // For wrapped options, the parentMenu is another level up.
+            menuEl = menuEl.parentNode;
+        }
+        var optionsParentMenu = menuEl.host;
+
+        // Get all the option's siblings.
+        var options = optionsParentMenu.getOptionEls();
+        if (optionsParentMenu.search) {
+          options.unshift(optionsParentMenu.$.search.$.value);
+          optionsParentMenu.$.search.$.value.focus();
+        }
+        function previous() {
+          var newOption =
+              options[(options.indexOf(option) + options.length - 1) % (options.length)];
+          newOption.expanded = true;
+          newOption.focus();
+          option.expanded = false;
+        }
+        function next() {
+          var newOption = options[(options.indexOf(option) + 1) % (options.length)]
+          newOption.expanded = true;
+          newOption.focus();
+          option.expanded = false;
+        }
+        function up() {
+          if (scope.parentNode.host.localName == 'io-menu-option') {
+            scope.parentNode.host.expanded = true;
+            scope.parentNode.host.focus();
+            option.expanded = false;
+          }
+        }
+        function down() {
+          var submenu = option.shadowRoot.querySelectorAll('io-menu');
+          var options = [];
+          if (submenu.length) {
+            options = submenu[0].shadowRoot.querySelectorAll('io-menu-option');
+            if (options.length) {
+              options[0].expanded = true;
+              options[0].focus();
+            }
+          }
+        }
+        function first() {
+          var options = optionsParentMenu.getOptionEls();
+          var newOption = options[0];
+          newOption.expanded = true;
+          newOption.focus();
+          option.expanded = false;
+        }
+        function last() {
+          var options = optionsParentMenu.getOptionEls();
+          var newOption = options[options.length - 1];
+          newOption.expanded = true;
+          newOption.focus();
+          option.expanded = false;
+        }
+        function tab() {
+          // TODO: handle submenus better
+          var i = (options.indexOf(option) + 1);
+          next();
+        }
+
+        switch (event.detail.key) {
+          // TODO: fix back to main menu on menu-bar-menu
+          case 'up':
+              if (display == 'inline-block') up();
+              else previous();
+            break;
+          case 'down':
+              if (display == 'inline-block') down();
+              else next();
+            break;
+          case 'left':
+              if (display == 'inline-block') previous();
+              else up();
+            break;
+          case 'right':
+              if (display == 'inline-block') next();
+              else down();
+            break;
+          case 'first':
+            first();
+            break;
+          case 'last':
+            last();
+            break;
+          case 'tab':
+            tab();
+            break;
+          case 'close':
+            this.expanded = false;
+            break;
+        }
+
+      },
+      getOptionEls: function() {
+        var menuOptionsQuery = '::shadow > #optionsWrapper > io-menu-option';
+        return Array.prototype.slice.call(this.querySelectorAll(menuOptionsQuery));
+      },
+      handleAction: function(event, details) {
+        if (this.keepOpen || details.keepOpen) {
+          event.stopPropagation();
+        } else {
+          this.collapse(event);
+        }
+      },
+      collapseFromOverlay: function(event) {
+        if (event.path[0] !== overlayLayer) return;
+        this.collapse(event);
+      },
+      collapse: function(event) {
+        this.expanded = false;
+        this.collapseOptions();
+      },
+      collapseOptions: function() {
+        if (this.optionElems && this.optionElems.length) {
+          for (var i = this.optionElems.length; i--;) {
+            var option = this.optionElems[i];
+            if (option.expanded) {
+              option.expanded = false;
+              this.fire('io-menu-option-collapsed', {
+                option: option,
+                label: option.label,
+                action: option.action,
+                arguments: option.arguments
+              });
+            }
+          }
+        }
+        // TODO: test
+        // previousOption = null;
+        // previousParent = null;
+      },
+
+      expand: function(event) {
+        if (this.disabled) return; //todo
+        if (this.ctrl && !event.ctrlKey) return; //todo
+        event.preventDefault();
+        this.style.top = event.y + 2 + 'px';
+        this.style.left = event.x + 2 + 'px';
+        this.expanded = true;
+      },
+      expandPrimary: function(event) {
+        if (!this.usePrimary) return;
+        this.expand(event);
+      },
+      expandOption: function(option) {
+        option._menu = option.shadowRoot.querySelector('io-menu');
+        if (option._menu) option._menu.collapseOptions();
+        this.collapseOptions();
+        option.expanded = true;
+        this.fire('io-menu-option-expanded', {
+          option: option,
+          label: option.label,
+          action: option.action,
+          arguments: option.arguments,
+          tooltip: option.tooltip
+        });
+      },
+
+      expandedChanged: function() {
+        previousOption = null;
+        previousParent = null;
+        this.searchString = '';
+        if (this.expanded) {
+          this.style.visibility = 'hidden';
+          // Fire asynchronously so that nudge is aware of the window bounds.
+          this.async(function() {
+            this.nudge();
+            if (this.search) {
+              // Fire asynchronously so that search box is in context and no other elements can take
+              // focus from it during the process of showing the menu.
+              this.async(function() {
+                this.$.search.$.value.focus();
+              }.bind(this));
+            }
+          }.bind(this));
+          this.openOverlay();
+          this.startAnimation();
+        } else {
+          this.closeOverlay();
+          this.stopAnimation();
+        }
+      },
+      nudge: function() {
+        var rect = this.getBoundingClientRect();
+        var style = window.getComputedStyle(this);
+        // nudge up
+        var bottomDist = rect.bottom - window.innerHeight;
+        if (bottomDist > 0) {
+          this.style.top = parseInt(style.top) - bottomDist + 'px';
+        }
+        // nudge left
+        var rightDist = rect.right - window.innerWidth;
+        if (rightDist > 0) {
+          if (this.isSubmenu()) {
+            this.style.left = - rect.width + 'px';
+          } else {
+            this.style.left = parseInt(style.left) - rightDist + 'px';
+          }
+        };
+        this.style.visibility = 'visible';
+      },
+
+      scroll: function() {
+        if (hoveredMenu != this) return;
+        var rect = this.getBoundingClientRect();
+        var style = window.getComputedStyle(this);
+        if (tempY < 100 && rect.top < 0) {
+          var scrollSpeed = (100 - tempY) / 2000;
+          var overflow = rect.top;
+          this.style.top = parseInt(style.top) - Math.ceil(overflow * scrollSpeed) + 1 + 'px';
+        } else if (tempY > window.innerHeight - 100 && rect.bottom > window.innerHeight) {
+          var scrollSpeed = (100 - (window.innerHeight - tempY)) / 2000;
+          var overflow = (rect.bottom - window.innerHeight);
+          this.style.top = parseInt(style.top) - Math.ceil(overflow * scrollSpeed) - 1 + 'px';
+        }
+      },
+
+      updateOptionElems: function() {
+        this.optionElems = this.querySelectorAll('* /deep/ io-menu-option');
+        for (var i = this.optionElems.length; i--;) {
+          this.optionElems[i].update();
+        }
+      },
+
+      optionsChanged: function() {
+        this.sortedChanged();
+      },
+
+      filterOptions: function(options) {
+        var filteredOptions = [];
+        if (this.searchString && options.length) {
+          options.forEach(function(option) {
+            // TODO: use regex
+            if (option.label && option.label.toLowerCase().search(this.searchString.toLowerCase()) != -1) {
+              filteredOptions.push(option);
+            }
+            if (option.options) {
+              filteredOptions = filteredOptions.concat(this.filterOptions(option.options));
+            }
+          }.bind(this));
+        }
+        return filteredOptions;
+      },
+      searchStringChanged: function() {
+        this.filteredOptions = this.filterOptions(this.options);
+      },
+      sortOptions: function(options) {
+        return options.concat().sort(function(a, b) {
+          if (a.label < b.label) {
+            return -1;
+          }
+          if (a.label > b.label) {
+            return 1;
+          }
+          return 0;
+        });
+      },
+      sortedChanged: function() {
+        if (!this.options) return;
+        this.sortedOptions = this.sorted ? this.sortOptions(this.options) : [];
+      },
+
+      isSubmenu: function() {
+        return this.parentNode.host && this.parentNode.host.localName == 'io-menu-option';
+      },
+      openOverlay: function() {
+        if (!this.isSubmenu()) {
+          overlayLayer.addElement(this);
+          overlayLayer.opened = this.expanded;
+          overlayLayer.addEventListener('click', this._collapseFromOverlay);
+          this.__inOverlay = true;
+          this.collapseOptions();
+        }
+      },
+      closeOverlay: function() {
+        if (!this.isSubmenu() && this.__inOverlay) {
+          overlayLayer.opened = this.expanded;
+          overlayLayer.removeEventListener('click', this._collapseFromOverlay);
+          this.__inOverlay = false;
+        }
+      },
+    });
+
+  })();
+  </script>
+</dom-module>

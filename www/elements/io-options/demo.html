@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <title>io-options demo</title>
+  <script src="../webcomponentsjs/webcomponents-lite.min.js"></script>
+  <link rel="import" href="../polymer/polymer.html">
+  <link rel="import" href="io-options.html">
+  <style type="text/css">
+    html {
+      -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+    }
+    body{
+      font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      background: #ddd;
+    }
+  </style>
+</head>
+<body unresolved fullbleed>
+  <demo-app></demo-app>
+  <polymer-element name="demo-app">
+    <template>
+      <io-options options="{{options}}"></io-options>
+    </template>
+    <script>
+      Polymer({
+        options: [1, 2, {value: 3, label: 'three'}]
+      })
+    </script>
+  </polymer-element>
+</body>
+</html>

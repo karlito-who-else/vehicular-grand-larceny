@@ -1,0 +1,93 @@
+<!--
+I/O element for boolean data type. Displays value as string.
+
+    <io-boolean value="true" truestr="Yes" falsestr="No"></io-boolean>
+
+__Note__: When element is focused, pressing enter/spacebar will toggle the value.
+
+@element io-boolean
+@extends io-base
+@homepage https://github.com/arodic/io-value
+@demo http://akirodic.com/components/io-value/demo.html
+@blurb I/O element for boolean data type. Displays value as string.
+@status alpha
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="_io-base.html">
+
+<dom-module id="io-boolean" extends="io-base">
+  <link rel="stylesheet" href="_io-base.css" is="custom-style">
+  <style type="text/css" is="custom-style">
+    :host(:not([disabled])) > .io-editor {
+      cursor: pointer;
+    }
+  </style>
+  <template>
+    <content></content>
+    <span id="value" class="io-editor" tabindex="0">{{value ? truestr : falsestr}}</span>
+  </template>
+  <script>
+    Polymer({
+      is: 'io-boolean',
+      publish: {
+        /**
+         * Element value.
+         *
+         * @attribute value
+         * @type boolean
+         * @default false
+         */
+        value: false,
+        /**
+         * String to display when value is true.
+         *
+         * @attribute truestr
+         * @type string
+         * @default 'true'
+         */
+        truestr: 'true',
+        /**
+         * String to display when value is false.
+         *
+         * @attribute falsestr
+         * @type string
+         * @default 'false'
+         */
+        falsestr: 'false'
+      },
+      eventDelegates: {
+        'keydown': 'keydownAction',
+        'down': 'downAction',
+        'tap': 'tapAction'
+      },
+      downAction: function(event) {
+        // prevent focus but let currently focused blur
+        event.preventDefault();
+        document.activeElement.blur();
+      },
+      tapAction: function(event) {
+        if (this.disabled) return;
+        if (event.path[0] == this.$.value) {
+          this.toggle();
+        }
+      },
+      keydownAction: function(event) {
+        if (this.disabled) return;
+        if (event.path[0] == this.$.value) {
+          if (event.which == 13 || event.which == 32) {
+            event.preventDefault(); // prevent blur
+            this.toggle();
+          }
+        }
+      },
+      /**
+       * Toggles the value.
+       *
+       * @method toggle
+       */
+      toggle: function() {
+        this.setValue(!this.value);
+      }
+    });
+  </script>
+</dom-module>
