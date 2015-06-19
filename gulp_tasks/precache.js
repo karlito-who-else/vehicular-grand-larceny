@@ -1,11 +1,9 @@
-'use strict';
+import fs from 'fs';
+import glob from 'glob';
+import gulp from 'gulp';
+import path from 'path';
 
-var fs = require('fs');
-var glob = require('glob');
-var gulp = require('gulp');
-var path = require('path');
-
-var config = require(__dirname + '/_config');
+import config from './_config.js';
 
 // Generate a list of files that should be precached when serving from 'dist'.
 // The list will be consumed by the <platinum-sw-cache> element.

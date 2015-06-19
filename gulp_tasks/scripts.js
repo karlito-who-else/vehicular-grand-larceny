@@ -1,27 +1,34 @@
-'use strict';
+import concat from 'gulp-concat';
+import debug from 'gulp-debug';
+import gulp from 'gulp';
+import jscs from 'gulp-jscs';
+import jshint from 'gulp-jshint';
+// import modernizr from 'gulp-modernizr';
+import sourcemaps from 'gulp-sourcemaps';
+import uglify from 'gulp-uglify';
+import util from 'gulp-util';
 
-var gulp = require('gulp');
-// var modernizr = require('gulp-modernizr');
-var rename = require('gulp-rename');
-var sourcemaps = require('gulp-sourcemaps');
-var uglify = require('gulp-uglify');
-var util = require('gulp-util');
-
-var config = require(__dirname + '/_config');
+import config from './_config.js';
 
 gulp.task('scripts', function() {
-  return gulp.src(config.files.scripts)
+  return gulp.src(config.path.source.scripts + config.files.scripts)
+    .pipe(debug({
+      title: 'scripts:'
+    }))
+    .pipe(jshint())
+    .pipe(jshint.reporter('default'))
+    .pipe(jscs({
+      fix: true
+    }))
     .pipe(sourcemaps.init())
+    .pipe(concat('app-min.js'))
     // .pipe(modernizr())
     .pipe(uglify())
     .pipe(sourcemaps.write('./maps'))
-    .pipe(rename(function(path) {
-      path.extname = '-min.js';
-    }))
-    .pipe(gulp.dest(config.path.scripts))
+    .pipe(gulp.dest(config.path.destination.scripts))
     .on('error', util.log);
 });
 
 gulp.task('scripts:watch', function() {
-  gulp.watch(config.files.scripts, ['scripts']);
+  gulp.watch(config.path.source.scripts + config.files.scripts, ['scripts']);
 });

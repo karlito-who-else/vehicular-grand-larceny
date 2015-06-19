@@ -4,9 +4,7 @@ import config from './_config.js';
 
 gulp.task(
   'build', [
-    'markup',
-    'scripts',
-    'styles',
-    'precache'
+    'screenshots',
+    'styleguide'
   ]
 );

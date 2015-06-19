@@ -1,8 +1,6 @@
-'use strict';
+import gulp from 'gulp';
 
-var gulp = require('gulp');
-
-// var config = require(__dirname + '/_config');
+// import config from './_config.js';
 
 // Load tasks for web-component-tester
 // Adds tasks for `gulp test:local` and `gulp test:remote`
