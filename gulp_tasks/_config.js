@@ -3,6 +3,7 @@ import path from 'path';
 const manifest = require(__dirname + '/../package.json');
 
 var config = {
+  domain: 'vgl.com',
   files: {
     images: '/**/*.{gif,jpg,jpeg,png,svg}',
     maps: '/**/*.map',
@@ -24,7 +25,11 @@ var config = {
   port: {
     http: process.env.PORT ? process.env.PORT : manifest.config.server.http.port
   },
-  instance: {}
+  instance: {
+    pagespeed: {
+      key: ''
+    }
+  }
 };
 
 // Paths
