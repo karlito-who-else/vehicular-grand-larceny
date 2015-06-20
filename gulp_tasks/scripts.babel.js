@@ -1,6 +1,9 @@
+'use strict';
+
 import concat from 'gulp-concat';
 import debug from 'gulp-debug';
 import gulp from 'gulp';
+import gulpif from 'gulp-if';
 import jscs from 'gulp-jscs';
 import jshint from 'gulp-jshint';
 // import modernizr from 'gulp-modernizr';
@@ -8,7 +11,7 @@ import sourcemaps from 'gulp-sourcemaps';
 import uglify from 'gulp-uglify';
 import util from 'gulp-util';
 
-import config from './_config.js';
+import {config, browserSync} from './_config.js';
 
 gulp.task('scripts', function() {
   return gulp.src(config.path.source.scripts + config.files.scripts)
@@ -16,7 +19,8 @@ gulp.task('scripts', function() {
       title: 'scripts:'
     }))
     .pipe(jshint())
-    .pipe(jshint.reporter('default'))
+    .pipe(jshint.reporter('jshint-stylish'))
+    .pipe(gulpif(!browserSync.active, jshint.reporter('fail')))
     .pipe(jscs({
       fix: true
     }))

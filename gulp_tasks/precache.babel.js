@@ -1,3 +1,5 @@
+'use strict';
+
 import fs from 'fs';
 import glob from 'glob';
 import gulp from 'gulp';

@@ -1,3 +1,5 @@
+'use strict';
+
 import debug from 'gulp-debug';
 import gulp from 'gulp';
 import imagemin from 'gulp-imagemin';

@@ -1,3 +1,5 @@
+'use strict';
+
 import path from 'path';
 
 const manifest = require(__dirname + '/../package.json');

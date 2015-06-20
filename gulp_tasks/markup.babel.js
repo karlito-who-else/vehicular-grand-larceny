@@ -1,22 +1,24 @@
+'use strict';
+
 import debug from 'gulp-debug';
 import gulp from 'gulp';
+import htmlhint from 'gulp-htmlhint';
+import htmltidy from 'gulp-htmltidy';
 import util from 'gulp-util';
-import webshot from 'gulp-webshot';
 
 import config from './_config.js';
 
-gulp.task('screenshots', function() {
+gulp.task('markup', function() {
   return gulp.src(config.path.source.markup + config.files.markup)
     .pipe(debug({
-      title: 'screenshots:'
+      title: 'markup:'
     }))
-    .pipe(webshot({
-      dest: config.path.destination.screenshots,
-      root: ''
-    }))
+    .pipe(htmlhint('.htmlhintrc'))
+    .pipe(htmltidy())
+    .pipe(gulp.dest(config.path.destination.markup))
     .on('error', util.log);
 });
 
-gulp.task('screenshots:watch', function() {
+gulp.task('markup:watch', function() {
   gulp.watch(config.path.source.markup + config.files.markup, ['markup']);
 });

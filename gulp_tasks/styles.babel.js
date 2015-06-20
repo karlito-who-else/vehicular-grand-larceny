@@ -1,3 +1,5 @@
+'use strict';
+
 import autoprefixer from 'gulp-autoprefixer';
 import cached from 'gulp-cached';
 import csscomb from 'gulp-csscomb';
@@ -13,7 +15,9 @@ import util from 'gulp-util';
 import {config, browserSync} from './_config.js';
 
 gulp.task('styles', function() {
-  gulp.src(config.path.source.styles + config.files.styles) // stream not returned, see https://github.com/dlmanning/gulp-sass/wiki/Common-Issues-and-Their-Fixes#gulp-watch-stops-working-on-an-error
+  // stream not returned, see:
+  // https://github.com/dlmanning/gulp-sass/wiki/Common-Issues-and-Their-Fixes#gulp-watch-stops-working-on-an-error
+  gulp.src(config.path.source.styles + config.files.styles)
     .pipe(debug({
       title: 'styles:'
     }))
@@ -43,7 +47,6 @@ gulp.task('styles', function() {
     .pipe(sourcemaps.write('./maps'))
     .pipe(gulp.dest(config.path.destination.styles))
     .pipe(browserSync.stream({match: '**/*.css'}))
-    // .pipe(browserSync.reload({stream: true}))
     .on('error', util.log);
 });
 
@@ -51,9 +54,9 @@ gulp.task('styles:watch', function() {
   var watcher = gulp.watch(config.path.source.styles + config.files.styles, ['styles']);
   console.log(cached.caches);
   watcher.on('change', function(event) {
-    console.log('change', cache.caches);
+    console.log('change', cached.caches);
     if (event.type === 'deleted') { // if a file is deleted, forget about it
-      delete cached.caches['styles'][event.path];
+      delete cached.caches.styles[event.path];
       remember.forget('styles', event.path);
     }
   });

@@ -1,3 +1,5 @@
+'use strict';
+
 import debug from 'gulp-debug';
 import dss from 'gulp-dss';
 import gulp from 'gulp';

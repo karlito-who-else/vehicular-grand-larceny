@@ -1,3 +1,5 @@
+'use strict';
+
 import debug from 'gulp-debug';
 import ffmpeg from 'gulp-fluent-ffmpeg';
 import gulp from 'gulp';
