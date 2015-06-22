@@ -1,10 +1,11 @@
 'use strict';
 
+import fs from 'fs';
 import path from 'path';
 
 import manifest from '../package.json';
-import bowerrc from '../.bowerrc';
-// import npmrc from '../.npmrc';
+
+const bowerrc = JSON.parse(fs.readFileSync('.bowerrc'));
 
 var config = {
   domain: 'vgl.com',
@@ -21,22 +22,18 @@ var config = {
       '/node_modules/apache-server-configs/dist/.htaccess'
     ],
     scripts: '/**/!(*-min).js',
+    sounds: '/**/*.{ogg,mp3,wav}',
     styles: '/**/*.scss',
-    videos: '/**/*.{avi,ogg,mov,mp4,mpg.mpeg}'
+    videos: '/**/*.{avi,ogg,mov,mp4,mpg,mpeg}'
   },
   path: {
-    // bowerComponents: path.normalize(__dirname + '/../bower_components'),
     bowerComponents: bowerrc.directory,
-    // nodeModules: path.normalize(__dirname + '/../node_modules'),
     nodeModules: 'node_modules',
-    // root: path.normalize(__dirname + '/..'),
     root: '.',
     source: {
-      // base: path.normalize(__dirname + '/../app')
       base: 'app'
     },
     destination: {
-      // base: path.normalize(__dirname + '/../www')
       base: 'www'
     }
   },

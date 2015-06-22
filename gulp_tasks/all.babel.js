@@ -3,7 +3,7 @@
 import gulp from 'gulp';
 
 gulp.task(
-  'default', [
+  'all', [
     'assets',
     'build',
     'document'

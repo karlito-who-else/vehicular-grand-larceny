@@ -8,7 +8,7 @@ import util from 'gulp-util';
 import config from './_config.babel.js';
 
 gulp.task('videos', function() {
-  return gulp.src(config.path.source.video + config.files.videos)
+  return gulp.src(config.path.source.videos + config.files.videos)
     .pipe(debug({
       title: 'videos:'
     }))
@@ -16,8 +16,16 @@ gulp.task('videos', function() {
       return cmd
         .audioBitrate('256k')
         .audioChannels(2)
-        .audioCodec('libfaac')
-        .videoCodec('libx264');
+        .audioCodec('libfdk-aac')
+        // .audioCodec('libvo_aacenc')
+        // .audioCodec('libfaac')
+        // .audioCodec('libvo-aacenc')
+        // .audioCodec('libmp3lame')
+        .videoCodec('libx264')
+        .on('end', function() {
+          console.log('sounds: Processing finished');
+        })
+        .on('error', util.log);
     }))
     .pipe(gulp.dest(config.path.destination.videos))
     .on('error', util.log);
