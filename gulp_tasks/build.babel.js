@@ -2,14 +2,11 @@
 
 import gulp from 'gulp';
 
-import config from './_config.babel.js';
-
-gulp.task(
-  'build', [
-    'copy',
-    'markup',
-    'scripts',
-    'styles',
-    'precache'
-  ]
-);
+gulp.task('build', [
+  'copy',
+  'markup',
+  'scripts',
+  'styles',
+  'offline',
+  'precache'
+]);

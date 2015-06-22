@@ -2,10 +2,11 @@
 
 import gulp from 'gulp';
 
-gulp.task(
-  'default', [
-    'assets',
-    'build',
-    'document'
-  ]
-);
+gulp.task('all', [
+  'framework',
+  'assets',
+  'build',
+  'document',
+  'test',
+  'pagespeed'
+]);

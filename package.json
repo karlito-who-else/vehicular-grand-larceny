@@ -3,6 +3,7 @@
   "name": "vehicular-grand-larceny",
   "description": "Vehicular Grand Larceny",
   "version": "0.1.0",
+  "domain": "vgl.com",
   "homepage": "http://vgl.com",
   "author": {
     "name": "Prime Ordinal",
@@ -63,6 +64,7 @@
     "gulp-jscs": "^1.6.0",
     "gulp-jsdoc": "^0.1.4",
     "gulp-jshint": "^1.11.0",
+    "gulp-jsonlint": "^1.1.0",
     "gulp-load-plugins": "^1.0.0-rc",
     "gulp-minify-css": "^1.1.6",
     "gulp-minify-html": "^1.0.3",

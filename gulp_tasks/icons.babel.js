@@ -7,7 +7,7 @@ import util from 'gulp-util';
 
 import config from './_config.babel.js';
 
-gulp.task('icons', function() {
+gulp.task('icons', () => {
   return gulp.src(config.path.source.icons + config.files.icons)
     .pipe(debug({
       title: 'icons:'

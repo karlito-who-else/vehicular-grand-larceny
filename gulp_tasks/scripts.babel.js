@@ -13,7 +13,7 @@ import util from 'gulp-util';
 
 import {config, browserSync} from './_config.babel.js';
 
-gulp.task('scripts', function() {
+gulp.task('scripts', () => {
   return gulp.src(config.path.source.scripts + config.files.scripts)
     .pipe(debug({
       title: 'scripts:'

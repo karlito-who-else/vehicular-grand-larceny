@@ -7,7 +7,7 @@ import util from 'gulp-util';
 
 import config from './_config.babel.js';
 
-gulp.task('images', function() {
+gulp.task('images', () => {
   return gulp.src(config.path.source.images + config.files.images)
     .pipe(debug({
       title: 'images:'

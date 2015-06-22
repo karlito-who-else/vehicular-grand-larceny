@@ -8,7 +8,7 @@ import webshot from 'gulp-webshot';
 
 import config from './_config.babel.js';
 
-gulp.task('screenshots', function() {
+gulp.task('screenshots', () => {
   return gulp.src(config.path.source.screenshots + config.files.markup)
     .pipe(debug({
       title: 'screenshots:'
