@@ -3,7 +3,8 @@
 import path from 'path';
 
 import manifest from '../package.json';
-// const manifest = require(__dirname + '/../package.json');
+import bowerrc from '../.bowerrc';
+// import npmrc from '../.npmrc';
 
 var config = {
   domain: 'vgl.com',
@@ -12,18 +13,31 @@ var config = {
     images: '/**/*.{gif,jpg,jpeg,png}',
     maps: '/**/*.map',
     markup: '/**/*.html',
+    miscellaneous: [
+      '/**/*.{ico,json,txt}',
+
+    ],
+    packages: [
+      '/node_modules/apache-server-configs/dist/.htaccess'
+    ],
     scripts: '/**/!(*-min).js',
     styles: '/**/*.scss',
-    videos: '/**/*.{ogg,mov,mp4}'
+    videos: '/**/*.{avi,ogg,mov,mp4,mpg.mpeg}'
   },
   path: {
-    bowerComponents: path.normalize(__dirname + '/../bower_components'),
-    nodeModules: path.normalize(__dirname + '/../node_modules'),
+    // bowerComponents: path.normalize(__dirname + '/../bower_components'),
+    bowerComponents: bowerrc.directory,
+    // nodeModules: path.normalize(__dirname + '/../node_modules'),
+    nodeModules: 'node_modules',
+    // root: path.normalize(__dirname + '/..'),
+    root: '.',
     source: {
-      base: path.normalize(__dirname + '/../app')
+      // base: path.normalize(__dirname + '/../app')
+      base: 'app'
     },
     destination: {
-      base: path.normalize(__dirname + '/../www')
+      // base: path.normalize(__dirname + '/../www')
+      base: 'www'
     }
   },
   port: {
@@ -42,6 +56,9 @@ config.path.destination.documentation = config.path.destination.base + '/documen
 
 config.path.source.elements = config.path.source.base + '/elements';
 config.path.destination.elements = config.path.destination.base + '/elements';
+
+config.path.source.fonts = config.path.source.base + '/fonts';
+config.path.destination.fonts = config.path.destination.base + '/fonts';
 
 config.path.source.markup = config.path.source.base;
 config.path.destination.markup = config.path.destination.base;
@@ -81,11 +98,12 @@ config.instance.browsersync = {
   notify: true,
   open: false,
   port: manifest.config.server.browsersync.port,
-  proxy: 'http://localhost:' + config.port.http,
+  // proxy: 'http://localhost:' + config.port.http,
   server: {
     baseDir: ['.tmp', 'www'],
     routes: {
-      '/bower_components': 'bower_components'
+      '/bower_components': 'bower_components',
+      '/node_modules': 'node_modules'
     }
   },
   snippetOptions: {
@@ -107,4 +125,4 @@ config.instance.browsersync = {
 var browserSync = require('browser-sync').create();
 
 export default config;
-export {browserSync};
+export {config, browserSync};

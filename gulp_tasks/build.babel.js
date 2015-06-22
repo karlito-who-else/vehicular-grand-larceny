@@ -6,6 +6,7 @@ import config from './_config.babel.js';
 
 gulp.task(
   'build', [
+    'copy',
     'markup',
     'scripts',
     'styles',

@@ -13,7 +13,7 @@ gulp.task('images', function() {
       title: 'images:'
     }))
     .pipe(imagemin())
-    .pipe(gulp.dest(config.path.images))
+    .pipe(gulp.dest(config.path.destination.images))
     .on('error', util.log);
 });
 
