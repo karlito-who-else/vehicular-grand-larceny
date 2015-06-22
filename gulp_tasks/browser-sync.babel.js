@@ -2,7 +2,7 @@
 
 import gulp from 'gulp';
 
-import {config, browserSync} from './_config.js';
+import {config, browserSync} from './_config.babel.js';
 
 gulp.task(
   'browser-sync', [

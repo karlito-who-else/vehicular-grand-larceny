@@ -5,7 +5,7 @@ import ffmpeg from 'gulp-fluent-ffmpeg';
 import gulp from 'gulp';
 import util from 'gulp-util';
 
-import config from './_config.js';
+import config from './_config.babel.js';
 
 gulp.task('videos', function() {
   return gulp.src(config.path.source.video + config.files.videos)

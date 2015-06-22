@@ -2,12 +2,14 @@
 
 import path from 'path';
 
-const manifest = require(__dirname + '/../package.json');
+import manifest from '../package.json';
+// const manifest = require(__dirname + '/../package.json');
 
 var config = {
   domain: 'vgl.com',
   files: {
-    images: '/**/*.{gif,jpg,jpeg,png,svg}',
+    icons: '/**/*.svg',
+    images: '/**/*.{gif,jpg,jpeg,png}',
     maps: '/**/*.map',
     markup: '/**/*.html',
     scripts: '/**/!(*-min).js',
@@ -35,11 +37,17 @@ var config = {
 };
 
 // Paths
+config.path.source.documentation = config.path.source.base + '/documentation';
+config.path.destination.documentation = config.path.destination.base + '/documentation';
+
 config.path.source.elements = config.path.source.base + '/elements';
 config.path.destination.elements = config.path.destination.base + '/elements';
 
 config.path.source.markup = config.path.source.base;
 config.path.destination.markup = config.path.destination.base;
+
+config.path.source.icons = config.path.source.base + '/icons';
+config.path.destination.icons = config.path.destination.base + '/icons';
 
 config.path.source.images = config.path.source.base + '/images';
 config.path.destination.images = config.path.destination.base + '/images';
@@ -49,6 +57,9 @@ config.path.destination.scripts = config.path.destination.base + '/scripts';
 
 config.path.source.screenshots = config.path.source.base + '/screenshots';
 config.path.destination.screenshots = config.path.destination.base + '/screenshots';
+
+config.path.source.sounds = config.path.source.base + '/sounds';
+config.path.destination.sounds = config.path.destination.base + '/sounds';
 
 config.path.source.styles = config.path.source.base + '/styles';
 config.path.destination.styles = config.path.destination.base + '/styles';

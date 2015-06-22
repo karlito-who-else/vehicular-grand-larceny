@@ -5,7 +5,7 @@ import glob from 'glob';
 import gulp from 'gulp';
 import path from 'path';
 
-import config from './_config.js';
+import config from './_config.babel.js';
 
 // See http://www.html5rocks.com/en/tutorials/service-worker/introduction/ for
 // an in-depth explanation of what service workers are and why you should care.

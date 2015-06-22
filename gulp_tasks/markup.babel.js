@@ -3,10 +3,12 @@
 import debug from 'gulp-debug';
 import gulp from 'gulp';
 import htmlhint from 'gulp-htmlhint';
-import htmltidy from 'gulp-htmltidy';
+// import htmltidy from 'gulp-htmltidy';
+import minifyHTML from 'gulp-minify-html';
+
 import util from 'gulp-util';
 
-import config from './_config.js';
+import config from './_config.babel.js';
 
 gulp.task('markup', function() {
   return gulp.src(config.path.source.markup + config.files.markup)
@@ -14,7 +16,8 @@ gulp.task('markup', function() {
       title: 'markup:'
     }))
     .pipe(htmlhint('.htmlhintrc'))
-    .pipe(htmltidy())
+    // .pipe(htmltidy())
+    .pipe(minifyHTML())
     .pipe(gulp.dest(config.path.destination.markup))
     .on('error', util.log);
 });

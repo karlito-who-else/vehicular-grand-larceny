@@ -5,7 +5,7 @@ import dss from 'gulp-dss';
 import gulp from 'gulp';
 import util from 'gulp-util';
 
-import config from './_config.js';
+import config from './_config.babel.js';
 
 gulp.task('styleguide', function() {
   return gulp.src(config.path.source.styles + config.files.styles)

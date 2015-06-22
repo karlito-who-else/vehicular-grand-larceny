@@ -5,7 +5,7 @@ import gulp from 'gulp';
 import imagemin from 'gulp-imagemin';
 import util from 'gulp-util';
 
-import config from './_config.js';
+import config from './_config.babel.js';
 
 gulp.task('images', function() {
   return gulp.src(config.path.source.images + config.files.images)

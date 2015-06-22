@@ -12,7 +12,7 @@ import sourcemaps from 'gulp-sourcemaps';
 // import uncss from 'gulp-uncss';
 import util from 'gulp-util';
 
-import {config, browserSync} from './_config.js';
+import {config, browserSync} from './_config.babel.js';
 
 gulp.task('styles', function() {
   // stream not returned, see:

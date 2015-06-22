@@ -11,7 +11,7 @@ import sourcemaps from 'gulp-sourcemaps';
 import uglify from 'gulp-uglify';
 import util from 'gulp-util';
 
-import {config, browserSync} from './_config.js';
+import {config, browserSync} from './_config.babel.js';
 
 gulp.task('scripts', function() {
   return gulp.src(config.path.source.scripts + config.files.scripts)
