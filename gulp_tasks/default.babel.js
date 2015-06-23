@@ -2,8 +2,6 @@
 
 import gulp from 'gulp';
 
-gulp.task(
-  'default', [
-    'watch'
-  ]
-);
+gulp.task('default', [
+  'watch'
+]);

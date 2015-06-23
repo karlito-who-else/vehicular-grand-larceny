@@ -4,11 +4,8 @@ import gulp from 'gulp';
 
 import {config, browserSync} from './_config.babel.js';
 
-gulp.task(
-  'browser-sync', [
+gulp.task('browser-sync', [
     'build'
-  ],
-  function() {
-    browserSync.init(config.instance.browsersync);
-  }
+  ], () =>
+  browserSync.init(config.instance.browsersync)
 );

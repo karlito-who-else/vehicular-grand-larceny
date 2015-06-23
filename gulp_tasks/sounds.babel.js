@@ -7,7 +7,7 @@ import util from 'gulp-util';
 
 import config from './_config.babel.js';
 
-gulp.task('sounds', function() {
+gulp.task('sounds', () => {
   return gulp.src(config.path.source.sounds + config.files.sounds)
     .pipe(debug({
       title: 'sounds:'

@@ -1,9 +1,12 @@
 'use strict';
 
 import fs from 'fs';
-import glob from 'glob';
+// import glob from 'glob';
 import gulp from 'gulp';
 import path from 'path';
+import swPrecache from 'sw-precache';
+
+import manifest from '../package.json';
 
 import config from './_config.babel.js';
 
@@ -17,7 +20,7 @@ gulp.task('generate-service-worker', cb => {
 
   swPrecache({
     // Used to avoid cache conflicts when serving on localhost.
-    cacheId: pkg.name || 'web-starter-kit',
+    cacheId: manifest.name || 'web-starter-kit',
     // URLs that don't directly map to single static files can be defined here.
     // If any of the files a URL depends on changes, then the URL's cache entry
     // is invalidated and it will be refetched.

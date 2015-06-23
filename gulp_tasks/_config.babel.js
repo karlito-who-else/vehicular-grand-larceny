@@ -1,29 +1,28 @@
 'use strict';
 
 import fs from 'fs';
-import path from 'path';
 
 import manifest from '../package.json';
 
 const bowerrc = JSON.parse(fs.readFileSync('.bowerrc'));
 
 var config = {
-  domain: 'vgl.com',
+  domain: manifest.domain,
   files: {
     icons: '/**/*.svg',
     images: '/**/*.{gif,jpg,jpeg,png}',
     maps: '/**/*.map',
     markup: '/**/*.html',
-    miscellaneous: [
-      '/**/*.{ico,json,txt}',
-
-    ],
+    miscellaneous: '/**/*.{ico,json,txt}',
     packages: [
       '/node_modules/apache-server-configs/dist/.htaccess'
     ],
     scripts: '/**/!(*-min).js',
-    sounds: '/**/*.{ogg,mp3,wav}',
     styles: '/**/*.scss',
+	tasks: [
+      './*.{js}',
+      './gulp_tasks/**/*.js'
+    ],
     videos: '/**/*.{avi,ogg,mov,mp4,mpg,mpeg}'
   },
   path: {

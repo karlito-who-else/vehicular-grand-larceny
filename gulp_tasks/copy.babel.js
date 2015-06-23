@@ -6,10 +6,10 @@ import util from 'gulp-util';
 
 import config from './_config.babel.js';
 
-gulp.task('copy', function() {
+gulp.task('copy', () => {
   return gulp.src([
-      config.path.source.base + config.files.miscellaneous,
-      config.path.root + config.files.packages
+      config.files.miscellaneous,
+      config.files.packages
     ], {
       dot: true
     })
@@ -21,5 +21,5 @@ gulp.task('copy', function() {
 });
 
 gulp.task('copy:watch', function() {
-  gulp.watch(config.path.source.base + config.files.miscellaneous, ['copy']);
+  gulp.watch(config.files.miscellaneous, ['copy']);
 });

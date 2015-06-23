@@ -14,7 +14,7 @@ import util from 'gulp-util';
 
 import {config, browserSync} from './_config.babel.js';
 
-gulp.task('styles', function() {
+gulp.task('styles', () => {
   // stream not returned, see:
   // https://github.com/dlmanning/gulp-sass/wiki/Common-Issues-and-Their-Fixes#gulp-watch-stops-working-on-an-error
   gulp.src(config.path.source.styles + config.files.styles)

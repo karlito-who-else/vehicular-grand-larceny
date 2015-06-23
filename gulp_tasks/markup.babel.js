@@ -10,7 +10,7 @@ import util from 'gulp-util';
 
 import config from './_config.babel.js';
 
-gulp.task('markup', function() {
+gulp.task('markup', () => {
   return gulp.src(config.path.source.markup + config.files.markup)
     .pipe(debug({
       title: 'markup:'

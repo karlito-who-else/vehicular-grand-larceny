@@ -9,7 +9,7 @@ import manifest from '../package.json';
 
 import config from './_config.babel.js';
 
-gulp.task('documentation', function() {
+gulp.task('documentation', () => {
   return gulp.src([config.path.source.scripts + config.files.scripts, config.path.source.base + '/README.md'])
     .pipe(debug({
       title: 'documentation:'

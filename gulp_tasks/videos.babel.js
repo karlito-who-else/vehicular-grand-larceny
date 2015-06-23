@@ -7,7 +7,7 @@ import util from 'gulp-util';
 
 import config from './_config.babel.js';
 
-gulp.task('videos', function() {
+gulp.task('videos', () => {
   return gulp.src(config.path.source.videos + config.files.videos)
     .pipe(debug({
       title: 'videos:'
