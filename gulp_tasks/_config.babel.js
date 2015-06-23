@@ -9,6 +9,10 @@ const bowerrc = JSON.parse(fs.readFileSync('.bowerrc'));
 var config = {
   domain: manifest.domain,
   files: {
+    configuration: {
+      json: './{*.json,.*rc}',
+      yaml: './{*.yml,.*.yml}'
+    },
     icons: '/**/*.svg',
     images: '/**/*.{gif,jpg,jpeg,png}',
     maps: '/**/*.map',
@@ -18,8 +22,9 @@ var config = {
       '/node_modules/apache-server-configs/dist/.htaccess'
     ],
     scripts: '/**/!(*-min).js',
+    sounds: '/**/*.{ogg,pcm,mp3,wav}',
     styles: '/**/*.scss',
-	tasks: [
+    tasks: [
       './*.{js}',
       './gulp_tasks/**/*.js'
     ],

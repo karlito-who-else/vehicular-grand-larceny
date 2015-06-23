@@ -20,7 +20,7 @@ gulp.task('generate-service-worker', cb => {
 
   swPrecache({
     // Used to avoid cache conflicts when serving on localhost.
-    cacheId: manifest.name || 'web-starter-kit',
+    cacheId: manifest.name,
     // URLs that don't directly map to single static files can be defined here.
     // If any of the files a URL depends on changes, then the URL's cache entry
     // is invalidated and it will be refetched.

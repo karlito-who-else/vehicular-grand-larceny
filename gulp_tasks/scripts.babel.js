@@ -1,6 +1,6 @@
 'use strict';
 
-import concat from 'gulp-concat';
+// import concat from 'gulp-concat';
 import debug from 'gulp-debug';
 import gulp from 'gulp';
 import gulpif from 'gulp-if';
@@ -20,12 +20,12 @@ gulp.task('scripts', () => {
     }))
     .pipe(jshint())
     .pipe(jshint.reporter('jshint-stylish'))
-    .pipe(gulpif(!browserSync.active, jshint.reporter('fail')))
+    // .pipe(gulpif(!browserSync.active, jshint.reporter('fail')))
     .pipe(jscs({
       fix: true
     }))
     .pipe(sourcemaps.init())
-    .pipe(concat('app-min.js'))
+    // .pipe(concat('app-min.js'))
     // .pipe(modernizr())
     .pipe(uglify())
     .pipe(sourcemaps.write('./maps'))

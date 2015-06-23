@@ -16,14 +16,18 @@ gulp.task('sounds', () => {
     // .pipe(ffmpeg('m4a', function(cmd) {
     // .pipe(ffmpeg('aac', function(cmd) {
       return cmd
-        .audioBitrate('192k')
+        .addOptions([
+          '-movflags frag_keyframe+faststart'
+        ])
+        .audioBitrate(192)
         .audioChannels(2)
-        // .audioCodec('libfdk-aac')
         .audioCodec('libfdk_aac')
+        // .audioCodec('libfdk-aac')
         // .audioCodec('libvo_aacenc')
         // .audioCodec('libfaac')
         // .audioCodec('libvo-aacenc')
         // .audioCodec('libmp3lame')
+        .audioFrequency(22050)
         .noVideo()
         .on('end', function() {
           console.log('sounds: Processing finished');

@@ -8,8 +8,8 @@ import config from './_config.babel.js';
 
 gulp.task('copy', () => {
   return gulp.src([
-      config.files.miscellaneous,
-      config.files.packages
+      config.path.source.base + config.files.miscellaneous,
+      config.path.root + config.files.packages
     ], {
       dot: true
     })

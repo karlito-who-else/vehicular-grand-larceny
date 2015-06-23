@@ -14,13 +14,17 @@ gulp.task('videos', () => {
     }))
     .pipe(ffmpeg('mp4', function(cmd) {
       return cmd
-        .audioBitrate('256k')
+        .audioBitrate(192)
         .audioChannels(2)
-        .audioCodec('libfdk-aac')
+        .audioCodec('libfdk_aac')
+        // .audioCodec('libfdk-aac')
         // .audioCodec('libvo_aacenc')
         // .audioCodec('libfaac')
         // .audioCodec('libvo-aacenc')
         // .audioCodec('libmp3lame')
+        .audioFrequency(22050)
+        .fps(24)
+        .videoBitrate('512k')
         .videoCodec('libx264')
         .on('end', function() {
           console.log('sounds: Processing finished');

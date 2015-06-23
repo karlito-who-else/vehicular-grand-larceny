@@ -7,6 +7,6 @@ gulp.task('build', [
   'markup',
   'scripts',
   'styles',
-  'offline',
+  // 'generate-service-worker',
   'precache'
 ]);

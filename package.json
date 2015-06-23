@@ -81,6 +81,7 @@
     "gulp-useref": "^1.2.0",
     "gulp-util": "^3.0.5",
     "gulp-webshot": "^0.1.2",
+    "gulp-yaml-validate": "^1.0.2",
     "jshint-stylish": "^2.0.0",
     "npm-check-updates": "^1.5.1",
     "opn": "^2.0.0",
