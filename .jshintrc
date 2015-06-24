@@ -21,6 +21,7 @@
 		"$": true,
 		"document": true,
 		"imagesLoaded": true,
+		"Phaser": true,
 		"jQuery": true,
 		"navigator": true,
 		"window": true
