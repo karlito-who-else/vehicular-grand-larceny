@@ -74,6 +74,11 @@
             <span>Map</span>
           </a>
 
+          <a data-route="game" href="/game">
+            <iron-icon icon="av:games"></iron-icon>
+            <span>Game</span>
+          </a>
+
           <a data-route="contact" href="/contact">
             <iron-icon icon="mail"></iron-icon>
             <span>Contact</span>
@@ -153,6 +158,12 @@
                   }
                 </style>
                 <google-map latitude="37.77493" longitude="-122.41942" zoom="15"></google-map>
+              </paper-material>
+            </section>
+
+            <section data-route="game">
+              <paper-material elevation="1">
+                <game-instance></game-instance>
               </paper-material>
             </section>
 
