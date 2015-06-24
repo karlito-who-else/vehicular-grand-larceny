@@ -10,7 +10,7 @@ import config from './_config.babel.js';
 // Generate a list of files that should be precached when serving from 'dist'.
 // The list will be consumed by the <platinum-sw-cache> element.
 gulp.task('precache', cb => {
-  var filePath = path.join(config.path.source.base, 'precache.json');
+  var filePath = path.join(config.path.destination.base, 'precache.json');
 
   glob('{elements, scripts, styles}/**/*.*',
     {

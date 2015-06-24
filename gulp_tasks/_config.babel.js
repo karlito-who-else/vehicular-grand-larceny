@@ -17,11 +17,12 @@ var config = {
     images: '/**/*.{gif,jpg,jpeg,png}',
     maps: '/**/*.map',
     markup: '/**/*.html',
-    miscellaneous: '/**/*.{ico,json,txt}',
+    miscellaneous: '/*.{css,ico,json,txt}',
     packages: [
       '/node_modules/apache-server-configs/dist/.htaccess'
     ],
-    scripts: '/**/!(*-min).js',
+    // scripts: '/**/!(*-min).js',
+    scripts: '/**/*.js',
     sounds: '/**/*.{ogg,pcm,mp3,wav}',
     styles: '/**/*.scss',
     tasks: [

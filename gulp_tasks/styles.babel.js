@@ -17,7 +17,8 @@ import {config, browserSync} from './_config.babel.js';
 gulp.task('styles', () => {
   // stream not returned, see:
   // https://github.com/dlmanning/gulp-sass/wiki/Common-Issues-and-Their-Fixes#gulp-watch-stops-working-on-an-error
-  gulp.src(config.path.source.styles + config.files.styles)
+  // run from base to include files in elements folder
+  gulp.src(config.path.source.base + config.files.styles)
     .pipe(debug({
       title: 'styles:'
     }))
@@ -45,13 +46,13 @@ gulp.task('styles', () => {
     // }))
     .pipe(remember('styles')) // add back all files to the stream
     .pipe(sourcemaps.write('./maps'))
-    .pipe(gulp.dest(config.path.destination.styles))
+    .pipe(gulp.dest(config.path.destination.base))
     .pipe(browserSync.stream({match: '**/*.css'}))
     .on('error', util.log);
 });
 
 gulp.task('styles:watch', function() {
-  var watcher = gulp.watch(config.path.source.styles + config.files.styles, ['styles']);
+  var watcher = gulp.watch(config.path.source.base + config.files.styles, ['styles']);
   console.log(cached.caches);
   watcher.on('change', function(event) {
     console.log('change', cached.caches);

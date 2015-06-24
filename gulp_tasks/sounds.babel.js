@@ -34,10 +34,10 @@ gulp.task('sounds', () => {
         })
         .on('error', util.log);
     }))
-    .pipe(gulp.dest(config.path.destination.sounds))
+    .pipe(gulp.dest(config.path.destination.base))
     .on('error', util.log);
 });
 
 gulp.task('sounds:watch', function() {
-  gulp.watch(config.path.source.sounds + config.files.sounds, ['sounds']);
+  gulp.watch(config.path.source.base + config.files.sounds, ['sounds']);
 });

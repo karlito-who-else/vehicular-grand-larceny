@@ -8,7 +8,7 @@ import util from 'gulp-util';
 import config from './_config.babel.js';
 
 gulp.task('videos', () => {
-  return gulp.src(config.path.source.videos + config.files.videos)
+  return gulp.src(config.path.source.base + config.files.videos)
     .pipe(debug({
       title: 'videos:'
     }))
@@ -31,10 +31,10 @@ gulp.task('videos', () => {
         })
         .on('error', util.log);
     }))
-    .pipe(gulp.dest(config.path.destination.videos))
+    .pipe(gulp.dest(config.path.destination.base))
     .on('error', util.log);
 });
 
 gulp.task('videos:watch', function() {
-  gulp.watch(config.path.source.videos + config.files.videos, ['videos']);
+  gulp.watch(config.path.source.base + config.files.videos, ['videos']);
 });

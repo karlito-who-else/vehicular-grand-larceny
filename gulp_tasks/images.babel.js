@@ -8,15 +8,15 @@ import util from 'gulp-util';
 import config from './_config.babel.js';
 
 gulp.task('images', () => {
-  return gulp.src(config.path.source.images + config.files.images)
+  return gulp.src(config.path.source.base + config.files.images)
     .pipe(debug({
       title: 'images:'
     }))
     .pipe(imagemin())
-    .pipe(gulp.dest(config.path.destination.images))
+    .pipe(gulp.dest(config.path.destination.base))
     .on('error', util.log);
 });
 
 gulp.task('images:watch', function() {
-  gulp.watch(config.path.source.images + config.files.images, ['images']);
+  gulp.watch(config.path.source.base + config.files.images, ['images']);
 });

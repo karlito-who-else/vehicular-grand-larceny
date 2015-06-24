@@ -8,7 +8,7 @@ import util from 'gulp-util';
 import config from './_config.babel.js';
 
 gulp.task('styleguide', () => {
-  return gulp.src(config.path.source.styles + config.files.styles)
+  return gulp.src(config.path.source.base + config.files.styles)
     .pipe(debug({
       title: 'styleguide:'
     }))
