@@ -7,8 +7,10 @@ import util from 'gulp-util';
 
 import config from './_config.babel.js';
 
+const sourceFiles = config.files.images;
+
 gulp.task('images', () => {
-  return gulp.src(config.path.source.base + config.files.images)
+  return gulp.src(sourceFiles)
     .pipe(debug({
       title: 'images:'
     }))
@@ -18,5 +20,5 @@ gulp.task('images', () => {
 });
 
 gulp.task('images:watch', function() {
-  gulp.watch(config.path.source.base + config.files.images, ['images']);
+  gulp.watch(sourceFiles, ['images']);
 });

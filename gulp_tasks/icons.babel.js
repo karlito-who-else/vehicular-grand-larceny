@@ -7,8 +7,10 @@ import util from 'gulp-util';
 
 import config from './_config.babel.js';
 
+const sourceFiles = config.files.icons;
+
 gulp.task('icons', () => {
-  return gulp.src(config.path.source.base + config.files.icons)
+  return gulp.src(sourceFiles)
     .pipe(debug({
       title: 'icons:'
     }))
@@ -33,10 +35,10 @@ gulp.task('icons', () => {
         symbol: true // Activate the «symbol» mode
       }
     }))
-    .pipe(gulp.dest(config.path.destination.base))
+    .pipe(gulp.dest(config.path.destination.icons))
     .on('error', util.log);
 });
 
 gulp.task('icons:watch', function() {
-  gulp.watch(config.path.source.base + config.files.icons, ['icons']);
+  gulp.watch(sourceFiles, ['icons']);
 });

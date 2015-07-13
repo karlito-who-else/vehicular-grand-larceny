@@ -8,8 +8,10 @@ import webshot from 'gulp-webshot';
 
 import config from './_config.babel.js';
 
+const sourceFiles = config.files.markup;
+
 gulp.task('screenshots', () => {
-  return gulp.src(config.path.source.base + config.files.markup)
+  return gulp.src(sourceFiles)
     .pipe(debug({
       title: 'screenshots:'
     }))
@@ -22,5 +24,5 @@ gulp.task('screenshots', () => {
 });
 
 gulp.task('screenshots:watch', function() {
-  gulp.watch(config.path.source.screenshots + config.files.markup, ['screenshots']);
+  gulp.watch(sourceFiles, ['screenshots']);
 });

@@ -7,8 +7,10 @@ import util from 'gulp-util';
 
 import config from './_config.babel.js';
 
+const sourceFiles = config.files.sounds;
+
 gulp.task('sounds', () => {
-  return gulp.src(config.path.source.sounds + config.files.sounds)
+  return gulp.src(sourceFiles)
     .pipe(debug({
       title: 'sounds:'
     }))
@@ -39,5 +41,5 @@ gulp.task('sounds', () => {
 });
 
 gulp.task('sounds:watch', function() {
-  gulp.watch(config.path.source.base + config.files.sounds, ['sounds']);
+  gulp.watch(sourceFiles, ['sounds']);
 });

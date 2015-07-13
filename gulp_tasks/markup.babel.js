@@ -8,10 +8,12 @@ import minifyHTML from 'gulp-minify-html';
 
 import util from 'gulp-util';
 
-import config from './_config.babel.js';
+import {config, browserSync} from './_config.babel.js';
+
+const sourceFiles = config.files.markup;
 
 gulp.task('markup', () => {
-  return gulp.src(config.path.source.base + config.files.markup)
+  return gulp.src(sourceFiles)
     .pipe(debug({
       title: 'markup:'
     }))
@@ -23,5 +25,5 @@ gulp.task('markup', () => {
 });
 
 gulp.task('markup:watch', function() {
-  gulp.watch(config.path.source.base + config.files.markup, ['markup']);
+  gulp.watch(sourceFiles, ['markup'], browserSync.reload);
 });

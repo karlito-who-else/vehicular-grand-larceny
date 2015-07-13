@@ -7,8 +7,10 @@ import util from 'gulp-util';
 
 import config from './_config.babel.js';
 
+const sourceFiles = config.files.styles;
+
 gulp.task('styleguide', () => {
-  return gulp.src(config.path.source.base + config.files.styles)
+  return gulp.src(sourceFiles)
     .pipe(debug({
       title: 'styleguide:'
     }))
@@ -21,5 +23,5 @@ gulp.task('styleguide', () => {
 });
 
 gulp.task('styleguide:watch', function() {
-  gulp.watch(config.path.source.styles + config.files.styles, ['styleguide']);
+  gulp.watch(sourceFiles, ['styleguide']);
 });

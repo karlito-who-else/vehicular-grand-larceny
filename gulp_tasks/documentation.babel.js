@@ -9,8 +9,13 @@ import manifest from '../package.json';
 
 import config from './_config.babel.js';
 
+const sourceFiles = [
+  config.files.scripts,
+  config.files.documentation
+];
+
 gulp.task('documentation', () => {
-  return gulp.src([config.path.source.scripts + config.files.scripts, config.path.source.base + '/README.md'])
+  return gulp.src(sourceFiles)
     .pipe(debug({
       title: 'documentation:'
     }))
@@ -24,7 +29,7 @@ gulp.task('documentation', () => {
     .pipe(jsdoc.generator(config.path.destination.documentation, {
         path: 'ink-docstrap',
         systemName: manifest.name,
-        footer: 'For more information, see https://github.com/karlito-who-else/vehicular-grand-larceny/wiki',
+        footer: 'For more information, see https://github.com/karlito-who-else/grid/wiki',
         copyright: '&copy; copyright ' + new Date().getFullYear(),
         navType: 'vertical',
         theme: 'journal',
@@ -43,5 +48,5 @@ gulp.task('documentation', () => {
 });
 
 gulp.task('documentation:watch', function() {
-  gulp.watch(config.path.source.documentation + config.files.documentation, ['documentation']);
+  gulp.watch(sourceFiles, ['documentation']);
 });

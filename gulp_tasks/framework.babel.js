@@ -1,6 +1,7 @@
 'use strict';
 
-import debug from 'gulp-debug';
+import babel from 'gulp-babel';
+import debug from'gulp-debug';
 import gulp from 'gulp';
 import jscs from 'gulp-jscs';
 import jshint from 'gulp-jshint';
@@ -10,8 +11,10 @@ import util from 'gulp-util';
 
 import config from './_config.babel.js';
 
+const sourceFiles = config.files.tasks;
+
 gulp.task('framework', () => {
-  gulp.src(config.files.tasks)
+  gulp.src(sourceFiles)
     .pipe(debug({
       title: 'framework (tasks):'
     }))
@@ -39,5 +42,5 @@ gulp.task('framework', () => {
 });
 
 gulp.task('framework:watch', function() {
-  gulp.watch(config.files.framework, ['framework']);
+  gulp.watch(sourceFiles, ['framework']);
 });
