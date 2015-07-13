@@ -4,88 +4,96 @@
 // console.log('car', car);
 
 class Component {
-  constructor(phaser, color, decals) {
-    this.game = phaser.game;
-    this.controls = phaser.controls;
-    this.name = name;
-    this.color = color;
+  constructor(attributes, game, cursors) {
+    this.attributes = attributes;
+    this.game = game;
+    this.cursors = cursors;
   }
 }
 
 class Sprite extends Component {
-  constructor(phaser, color, decals) {
-    super(phaser, color, decals);
-    this.image = 'sprite';
-    // this.attachBehaviours();
+  constructor(attributes, game, cursors) {
+    super(attributes, game, cursors);
+    if (!this.attributes.image) {
+      this.attributes.image = 'sprite';
+    }
   }
   attachBehaviours() {
-
+    // super.attachBehaviours();
+    this.sprite.anchor.setTo(0.5, 0.75);
   }
-  update(cursors) {
+  update() {
 
   }
   loadImage() {
-    let image = this.image;
+    let image = this.attributes.image;
     this.game.load.image(image, `elements/game-instance/assets/sprites/${image}.png`);
   }
   addSprite() {
-    this.sprite = this.game.add.sprite(50, 50, this.image);
+    console.log('this.game', this.game);
+    console.log('this.attributes', this.attributes);
+    this.sprite = this.game.add.sprite(50, 50, this.attributes.image);
   }
 }
 
 class Mushroom extends Sprite {
-  constructor(phaser, color, decals) {
-    super(phaser, color, decals);
-    this.image = 'mushroom';
-    // this.attachBehaviours();
+  constructor(attributes, game, cursors) {
+    super(attributes, game, cursors);
+    if (!this.attributes.image) {
+      this.attributes.image = 'mushroom';
+    }
   }
   attachBehaviours() {
-
+    super.attachBehaviours();
   }
-  update(cursors) {
-    super.update(cursors);
+  update() {
+    super.update();
   }
 }
 
 class Sonic extends Sprite {
-  constructor(phaser, color, decals) {
-    super(phaser, color, decals);
-    this.image = 'sonic';
-    // this.attachBehaviours();
+  constructor(attributes, game, cursors) {
+    super(attributes, game, cursors);
+    if (!this.attributes.image) {
+      this.attributes.image = 'sonic';
+    }
   }
   attachBehaviours() {
-
+    super.attachBehaviours();super.attachBehaviours();
   }
-  update(cursors) {
-    super.update(cursors);
+  update() {
+    super.update();
   }
 }
 
 class Logo extends Sprite {
-  constructor(phaser, color, decals) {
-    super(phaser, color, decals);
-    this.image = 'logo';
-    // this.attachBehaviours();
+  constructor(attributes, game, cursors) {
+    super(attributes, game, cursors);
+    if (!this.attributes.image) {
+      this.attributes.image = 'logo';
+    }
   }
   attachBehaviours() {
-
+    super.attachBehaviours();
   }
-  update(cursors) {
-    super.update(cursors);
+  update() {
+    super.update();
   }
 }
 
 class Pedestrian extends Sprite {
-  constructor(phaser, color, decals) {
-    super(phaser, color, decals);
-    this.image = 'pedestrian';
-    // this.attachBehaviours();
+  constructor(attributes, game, cursors) {
+    super(attributes, game, cursors);
+    if (!this.attributes.image) {
+      this.attributes.image = 'pedestrian';
+    }
   }
   attachBehaviours() {
+    super.attachBehaviours();
     this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
   }
-  update(cursors) {
-    super.update(cursors);
+  update() {
+    super.update();
   }
   yell() {
     console.log(this.name + ' yells.');
@@ -93,66 +101,36 @@ class Pedestrian extends Sprite {
 }
 
 class Vehicle extends Sprite {
-  constructor(phaser, color, decals) {
-    super(phaser, color, decals);
-    this.image = 'vehicle';
-    // this.attachBehaviours();
+  constructor(attributes, game, cursors) {
+    super(attributes, game, cursors);
+    if (!this.attributes.image) {
+      this.attributes.image = 'vehicle';
+    }
   }
   attachBehaviours() {
+    super.attachBehaviours();
     this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
   }
-  update(cursors) {
-    super.update(cursors);
+  update() {
+    super.update();
   }
   honk() {
     console.log(this.name + ' honks.');
   }
 }
 
-class Player extends Pedestrian {
-  constructor(phaser, color, decals) {
-    super(phaser, color, decals);
-    this.image = 'player';
-    // this.attachBehaviours();
+class Car extends Vehicle {
+  constructor(attributes, game, cursors) {
+    super(attributes, game, cursors);
+    if (!this.attributes.image) {
+      this.attributes.image = 'car';
+    }
   }
   attachBehaviours() {
     super.attachBehaviours();
-    this.sprite.fixedToCamera = true;
   }
-  update(cursors) {
-    super.update(cursors);
-  }
-  yell() {
-    super.yell();
-    console.log(this.name + ' yells uproariously.');
-  }
-}
-
-class Car extends Vehicle {
-  constructor(phaser, color, decals) {
-    super(phaser, color, decals);
-    this.image = 'car';
-    // this.attachBehaviours();
-  }
-  attachBehaviours() {
-
-  }
-  update(cursors) {
-    console.log('update()');
-    super.update(cursors);
-
-    this.sprite.body.angularAcceleration = 0;
-
-    if (cursors.left.isDown) {
-      this.game.camera.x -= 4;
-      this.sprite.body.angularAcceleration -= 200;
-    } else if (cursors.right.isDown) {
-      this.game.camera.x += 4;
-      this.sprite.body.angularAcceleration += 200;
-    }
-  }
-  update(cursors) {
-    super.update(cursors);
+  update() {
+    super.update();
   }
   honk() {
     super.honk();
@@ -161,16 +139,17 @@ class Car extends Vehicle {
 }
 
 class Truck extends Vehicle {
-  constructor(phaser, color, decals) {
-    super(phaser, color, decals);
-    this.image = 'truck';
-    // this.attachBehaviours();
+  constructor(attributes, game, cursors) {
+    super(attributes, game, cursors);
+    if (!this.attributes.image) {
+      this.attributes.image = 'truck';
+    }
   }
   attachBehaviours() {
-
+    super.attachBehaviours();
   }
-  update(cursors) {
-    super.update(cursors);
+  update() {
+    super.update();
   }
   honk() {
     super.honk();
@@ -179,16 +158,17 @@ class Truck extends Vehicle {
 }
 
 class Motorcycle extends Vehicle {
-  constructor(phaser, color, decals) {
-    super(phaser, color, decals);
-    this.image = 'motorcycle';
-    // this.attachBehaviours();
+  constructor(attributes, game, cursors) {
+    super(attributes, game, cursors);
+    if (!this.attributes.image) {
+      this.attributes.image = 'motorcycle';
+    }
   }
   attachBehaviours() {
-
+    super.attachBehaviours();
   }
-  update(cursors) {
-    super.update(cursors);
+  update() {
+    super.update();
   }
   honk() {
     super.honk();
@@ -196,21 +176,40 @@ class Motorcycle extends Vehicle {
   }
 }
 
-class HondaCivic extends Car {
-  constructor(phaser, color, decals) {
-    super(phaser, color, decals);
-    this.image = 'honda_civic';
-    // this.attachBehaviours();
+class Player extends Car {
+  constructor(attributes, game, cursors) {
+    super(attributes, game, cursors);
   }
   attachBehaviours() {
+    super.attachBehaviours();
+    this.sprite.fixedToCamera = true;
+  }
+  update() {
+    this.attributes.camera = {
+      x: 4
+    };
+    this.attributes.turningSpeed = 5;
+    super.update();
+    if (this.cursors.up.isDown) {
+        this.game.physics.arcade.accelerationFromRotation(this.sprite.rotation, 200, this.sprite.body.acceleration);
+    } else {
+        this.sprite.body.acceleration.set(0);
+    }
 
+    if (this.cursors.left.isDown) {
+      // this.game.camera.x -= this.attributes.camera.x;
+      // this.sprite.body.angularAcceleration -= this.attributes.body.angularAcceleration;
+      this.sprite.body.angularVelocity -= this.attributes.turningSpeed;
+    } else if (this.cursors.right.isDown) {
+      // this.game.camera.x += this.attributes.camera.x;
+      // this.sprite.body.angularAcceleration += this.attributes.body.angularAcceleration;
+      this.sprite.body.angularVelocity += this.attributes.turningSpeed;
+    } else {
+      this.sprite.body.angularVelocity = 0;
+    }
   }
-  update(cursors) {
-    super.update(cursors);
-  }
-  honk() {
-    super.honk();
-    console.log(this.name + ' honks majestically.');
+  yell() {
+    console.log(this.name + ' yells uproariously.');
   }
 }
 
@@ -264,30 +263,42 @@ class HondaCivic extends Car {
 
       this.components = {};
 
-      this.components['Edmund'] = new HondaCivic(this, '#ff0000');
-      this.components['Toad'] = new Mushroom(this, '#00ff00');
+      this.components['Player 1'] = new Player({
+          name: 'Player 1',
+          color: '#ff0000',
+          decals: 'stripes'
+        },
+        this.game,
+        this.game.input.keyboard.createCursorKeys()
+      );
+
+      // this.components['Toad'] = new Mushroom({
+      //   name: 'Toad',
+      //   color: '#00ff00',
+      //   decals: 'dots'
+      // }, this.game);
 
       Object.keys(this.components).forEach(function(key) {
+        // this.components[key].loadImage(this.game);
         this.components[key].loadImage();
       }, this);
     },
 
     create: function() {
-      this.cursors = this.game.input.keyboard.createCursorKeys();
-
       this.game.world.resize(6000, 600);
 
       Object.keys(this.components).forEach(function(key) {
+        // this.components[key].addSprite(this.game);
+        // this.components[key].attachBehaviours(this.game);
         this.components[key].addSprite();
-        // this.components[key].attachBehaviours();
+        this.components[key].attachBehaviours();
       }, this);
     },
 
     update: function() {
-      // console.log('main update()');
       Object.keys(this.components).forEach(function(key) {
-        // console.log('this.components[key]', this.components[key]);
-        this.components[key].update(this.cursors);
+        // this.components[key].update(this.game, this.cursors);
+        this.components[key].update();
       }, this);
     },
 
