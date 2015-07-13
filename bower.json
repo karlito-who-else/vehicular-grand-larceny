@@ -26,7 +26,7 @@
     "phaser": "~2.3.0",
     "platinum-elements": "PolymerElements/platinum-elements#1.0.1",
     "polymer": "Polymer/polymer#^1.0.0",
-    "three-viewport": "~0.5.2"
+    "three-viewport": "~1.0.0"
   },
   "devDependencies": {
     "bootstrap-sass": "^3.3.4",

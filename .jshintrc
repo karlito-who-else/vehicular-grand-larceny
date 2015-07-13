@@ -19,11 +19,14 @@
 	"smarttabs": true,
 	"globals": {
 		"$": true,
+		"Blob": true,
 		"document": true,
 		"imagesLoaded": true,
-		"Phaser": true,
+		"importScripts": true,
 		"jQuery": true,
 		"navigator": true,
+		"Phaser": true,
+		"Polymer": true,
 		"window": true
 	}
 }

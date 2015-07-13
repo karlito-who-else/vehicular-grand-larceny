@@ -1,4 +1,5 @@
 <dom-module id="game-instance">
+  <link rel="import" href="/bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
   <style>
     :host {
       display: block;
@@ -11,8 +12,7 @@
     }
   </style>
   <template>
-    <h1 class="paper-font-display1"><span>{{greeting}}</span></h1>
-    <div id="game-instance-canvas"></div>
+    <main id="canvas"></main>
   </template>
 
   <script src="/bower_components/phaser/build/phaser.js"></script>
