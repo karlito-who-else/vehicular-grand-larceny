@@ -1,11 +1,12 @@
 'use strict';
 
-import babel from 'gulp-babel';
+// import babel from 'gulp-babel';
 import debug from'gulp-debug';
 import gulp from 'gulp';
 import jscs from 'gulp-jscs';
 import jshint from 'gulp-jshint';
 import jsonlint from 'gulp-jsonlint';
+// import typescript from 'gulp-tsc';
 import yamlvalidate from 'gulp-yaml-validate';
 import util from 'gulp-util';
 
@@ -23,6 +24,10 @@ gulp.task('framework', () => {
     .pipe(jscs({
       fix: false
     }))
+    // .pipe(typescript({
+    //   allowimportmodule: true,
+    //   target: 'ES6'
+    // }))
     .on('error', util.log);
 
   gulp.src(config.files.configuration.json)

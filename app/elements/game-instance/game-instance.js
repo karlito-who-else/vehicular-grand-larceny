@@ -1,5 +1,219 @@
 'use strict';
 
+// import car from './entities/car.js';
+// console.log('car', car);
+
+class Component {
+  constructor(phaser, color, decals) {
+    this.game = phaser.game;
+    this.controls = phaser.controls;
+    this.name = name;
+    this.color = color;
+  }
+}
+
+class Sprite extends Component {
+  constructor(phaser, color, decals) {
+    super(phaser, color, decals);
+    this.image = 'sprite';
+    // this.attachBehaviours();
+  }
+  attachBehaviours() {
+
+  }
+  update(cursors) {
+
+  }
+  loadImage() {
+    let image = this.image;
+    this.game.load.image(image, `elements/game-instance/assets/sprites/${image}.png`);
+  }
+  addSprite() {
+    this.sprite = this.game.add.sprite(50, 50, this.image);
+  }
+}
+
+class Mushroom extends Sprite {
+  constructor(phaser, color, decals) {
+    super(phaser, color, decals);
+    this.image = 'mushroom';
+    // this.attachBehaviours();
+  }
+  attachBehaviours() {
+
+  }
+  update(cursors) {
+    super.update(cursors);
+  }
+}
+
+class Sonic extends Sprite {
+  constructor(phaser, color, decals) {
+    super(phaser, color, decals);
+    this.image = 'sonic';
+    // this.attachBehaviours();
+  }
+  attachBehaviours() {
+
+  }
+  update(cursors) {
+    super.update(cursors);
+  }
+}
+
+class Logo extends Sprite {
+  constructor(phaser, color, decals) {
+    super(phaser, color, decals);
+    this.image = 'logo';
+    // this.attachBehaviours();
+  }
+  attachBehaviours() {
+
+  }
+  update(cursors) {
+    super.update(cursors);
+  }
+}
+
+class Pedestrian extends Sprite {
+  constructor(phaser, color, decals) {
+    super(phaser, color, decals);
+    this.image = 'pedestrian';
+    // this.attachBehaviours();
+  }
+  attachBehaviours() {
+    this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
+  }
+  update(cursors) {
+    super.update(cursors);
+  }
+  yell() {
+    console.log(this.name + ' yells.');
+  }
+}
+
+class Vehicle extends Sprite {
+  constructor(phaser, color, decals) {
+    super(phaser, color, decals);
+    this.image = 'vehicle';
+    // this.attachBehaviours();
+  }
+  attachBehaviours() {
+    this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
+  }
+  update(cursors) {
+    super.update(cursors);
+  }
+  honk() {
+    console.log(this.name + ' honks.');
+  }
+}
+
+class Player extends Pedestrian {
+  constructor(phaser, color, decals) {
+    super(phaser, color, decals);
+    this.image = 'player';
+    // this.attachBehaviours();
+  }
+  attachBehaviours() {
+    super.attachBehaviours();
+    this.sprite.fixedToCamera = true;
+  }
+  update(cursors) {
+    super.update(cursors);
+  }
+  yell() {
+    super.yell();
+    console.log(this.name + ' yells uproariously.');
+  }
+}
+
+class Car extends Vehicle {
+  constructor(phaser, color, decals) {
+    super(phaser, color, decals);
+    this.image = 'car';
+    // this.attachBehaviours();
+  }
+  attachBehaviours() {
+
+  }
+  update(cursors) {
+    console.log('update()');
+    super.update(cursors);
+
+    this.sprite.body.angularAcceleration = 0;
+
+    if (cursors.left.isDown) {
+      this.game.camera.x -= 4;
+      this.sprite.body.angularAcceleration -= 200;
+    } else if (cursors.right.isDown) {
+      this.game.camera.x += 4;
+      this.sprite.body.angularAcceleration += 200;
+    }
+  }
+  update(cursors) {
+    super.update(cursors);
+  }
+  honk() {
+    super.honk();
+    console.log(this.name + ' honks normally.');
+  }
+}
+
+class Truck extends Vehicle {
+  constructor(phaser, color, decals) {
+    super(phaser, color, decals);
+    this.image = 'truck';
+    // this.attachBehaviours();
+  }
+  attachBehaviours() {
+
+  }
+  update(cursors) {
+    super.update(cursors);
+  }
+  honk() {
+    super.honk();
+    console.log(this.name + ' honks loudly.');
+  }
+}
+
+class Motorcycle extends Vehicle {
+  constructor(phaser, color, decals) {
+    super(phaser, color, decals);
+    this.image = 'motorcycle';
+    // this.attachBehaviours();
+  }
+  attachBehaviours() {
+
+  }
+  update(cursors) {
+    super.update(cursors);
+  }
+  honk() {
+    super.honk();
+    console.log(this.name + ' honks pathetically.');
+  }
+}
+
+class HondaCivic extends Car {
+  constructor(phaser, color, decals) {
+    super(phaser, color, decals);
+    this.image = 'honda_civic';
+    // this.attachBehaviours();
+  }
+  attachBehaviours() {
+
+  }
+  update(cursors) {
+    super.update(cursors);
+  }
+  honk() {
+    super.honk();
+    console.log(this.name + ' honks majestically.');
+  }
+}
+
 (function() {
   Polymer({
     is: 'game-instance',
@@ -13,17 +227,12 @@
     },
 
     properties: {
-      greeting: {
-        type: String,
-        value: 'Game on!',
-        notify: true
-      }
     },
 
     // attached: function() {
     //   this.async(this.notifyResize, 1);
     // },
-
+    //
     // get parent() {
     //   if (this.parentNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
     //     return this.parentNode.host;
@@ -34,11 +243,6 @@
     _onIronResize: function() {
       console.log('_onIronResize');
       this.resize();
-      // var x = this.x = Math.floor(this.parent.offsetWidth / 3);
-      // var y = this.y = Math.floor(this.parent.offsetHeight / 3);
-      // console.log('x', x);
-      // console.log('y', y);
-      // this.translate3d(x + 'px', y + 'px', 0);
     },
 
     ready: function() {
@@ -56,105 +260,38 @@
     },
 
     preload: function() {
-      this.game.stage.backgroundColor = '#007236';
-      this.game.load.image('mushroom', 'elements/game-instance/assets/sprites/mushroom2.png');
-      this.game.load.image('sonic', 'elements/game-instance/assets/sprites/sonic_havok_sanity.png');
-      this.game.load.image('phaser', 'elements/game-instance/assets/sprites/phaser1.png');
+      this.game.stage.backgroundColor = '#ddd';
+
+      this.components = {};
+
+      this.components['Edmund'] = new HondaCivic(this, '#ff0000');
+      this.components['Toad'] = new Mushroom(this, '#00ff00');
+
+      Object.keys(this.components).forEach(function(key) {
+        this.components[key].loadImage();
+      }, this);
     },
 
     create: function() {
-      //  Modify the world and camera bounds
+      this.cursors = this.game.input.keyboard.createCursorKeys();
+
       this.game.world.resize(6000, 600);
 
-      this.mushrooms = this.game.add.group();
-
-      for (var i = 0; i < 200; i++) {
-        let mushroom = this.game.add.sprite(this.game.world.randomX, this.game.world.randomY, 'mushroom');
-        this.mushrooms.add(mushroom);
-      }
-
-      this.game.physics.enable(this.mushrooms, Phaser.Physics.ARCADE);
-
-      this.mushrooms.forEach(function(mushroom) {
-        // game.physics.arcade.collide(item, platforms);
-        // game.physics.arcade.overlap(player, item, gameOver);
-        // item.body.velocity.x = -120;
-        mushroom.body.maxAngular = 500;
-        mushroom.body.angularDrag = 50;
+      Object.keys(this.components).forEach(function(key) {
+        this.components[key].addSprite();
+        // this.components[key].attachBehaviours();
       }, this);
-
-      this.game.add.text(32, 32, 'this text is on the background\nuse arrows to scroll', {
-        font: '32px Arial',
-        fill: '#f26c4f',
-        align: 'left'
-      });
-
-      this.logo1 = this.game.add.sprite(100, 300, 'phaser');
-      this.logo1.fixedToCamera = true;
-
-      this.logo2 = this.game.add.sprite(500, 100, 'phaser');
-      this.logo2.fixedToCamera = true;
-
-      var t = this.game.add.text(200, 500, 'this text is fixed to the camera', {
-        font: '32px Arial',
-        fill: '#ffffff',
-        align: 'center'
-      });
-
-      t.fixedToCamera = true;
-      t.cameraOffset.setTo(200, 500);
-
-      this.game.add.tween(this.logo2.cameraOffset).to({
-        y: 400
-      }, 2000, Phaser.Easing.Back.InOut, true, 0, 2000, true);
-
-      this.cursors = this.game.input.keyboard.createCursorKeys();
     },
 
     update: function() {
-      if (this.cursors.left.isDown) {
-        this.game.camera.x -= 4;
-        this.mushrooms.alpha -= 0.01;
-      } else if (this.cursors.right.isDown) {
-        this.game.camera.x += 4;
-        this.mushrooms.alpha += 0.01;
-      }
-
-      // if (this.game.camera.x > 100) {
-      //   this.mushrooms.alpha = 0.2;
-      // } else {
-      //   this.mushrooms.alpha = 1.0;
-      // }
-
-      //  Reset the acceleration
-      this.mushrooms.forEach(function(mushroom) {
-        mushroom.body.angularAcceleration = 0;
+      // console.log('main update()');
+      Object.keys(this.components).forEach(function(key) {
+        // console.log('this.components[key]', this.components[key]);
+        this.components[key].update(this.cursors);
       }, this);
-
-      //  Apply acceleration if the left/right arrow keys are held down
-      if (this.cursors.left.isDown) {
-        this.mushrooms.forEach(function(mushroom) {
-          mushroom.body.angularAcceleration -= 200;
-        }, this);
-      } else if (this.cursors.right.isDown) {
-        this.mushrooms.forEach(function(mushroom) {
-          mushroom.body.angularAcceleration += 200;
-        }, this);
-      }
-
     },
 
     resize: function() {
-      if (!this.game) {
-        return;
-      }
-
-      // this.game.height = this.canvasHeight;
-      // this.game.width = this.canvasWidth;
-
-      // if (this.game.renderType === Phaser.WEBGL) {
-      // this.game.renderer.resize(this.canvasWidth, this.canvasHeight);
-      // }
     },
 
     render: function() {

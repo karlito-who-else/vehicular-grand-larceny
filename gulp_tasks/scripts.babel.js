@@ -9,6 +9,7 @@ import jscs from 'gulp-jscs';
 import jshint from 'gulp-jshint';
 // import modernizr from 'gulp-modernizr';
 import sourcemaps from 'gulp-sourcemaps';
+// import typescript from 'gulp-tsc';
 import uglify from 'gulp-uglify';
 import util from 'gulp-util';
 
@@ -23,13 +24,17 @@ gulp.task('scripts', () => {
     .pipe(debug({
       title: 'scripts:'
     }))
-    .pipe(jshint())
-    .pipe(jshint.reporter('jshint-stylish'))
+    // .pipe(jshint())
+    // .pipe(jshint.reporter('jshint-stylish'))
     // .pipe(gulpif(!browserSync.active, jshint.reporter('fail')))
     .pipe(sourcemaps.init())
-    .pipe(jscs({
-      fix: true
-    }))
+    // .pipe(jscs({
+    //   fix: true
+    // }))
+    // .pipe(typescript({
+    //   allowimportmodule: true,
+    //   target: 'ES6'
+    // }))
     .pipe(babel())
     // .pipe(concat('app-min.js'))
     // .pipe(modernizr())
