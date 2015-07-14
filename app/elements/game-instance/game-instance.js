@@ -4,213 +4,454 @@
 // console.log('car', car);
 
 class Component {
+
   constructor(attributes, game, cursors) {
     this.attributes = attributes;
     this.game = game;
     this.cursors = cursors;
   }
+
 }
 
 class Sprite extends Component {
-  constructor(attributes, game, cursors) {
-    super(attributes, game, cursors);
-    if (!this.attributes.image) {
-      this.attributes.image = 'sprite';
-    }
-  }
-  attachBehaviours() {
-    // super.attachBehaviours();
-    this.sprite.anchor.setTo(0.5, 0.75);
-  }
-  update() {
 
+  constructor(attributes, game, cursors) {
+    if (!attributes.image) {
+      attributes.image = 'sprite';
+    }
+
+    if (!attributes.position) {
+      attributes.position = {
+        x: game.world.randomX,
+        y: game.world.randomY
+      };
+    }
+
+    super(attributes, game, cursors);
   }
-  loadImage() {
+
+  loadImage() { //make static to allow preloading without first initialising game and cursors?
     let image = this.attributes.image;
     this.game.load.image(image, `elements/game-instance/assets/sprites/${image}.png`);
   }
+
   addSprite() {
-    console.log('this.game', this.game);
-    console.log('this.attributes', this.attributes);
-    this.sprite = this.game.add.sprite(50, 50, this.attributes.image);
+    this.sprite = this.game.add.sprite(this.attributes.position.x, this.attributes.position.y, this.attributes.image);
   }
+
+  attachBehaviours() {
+    this.sprite.anchor.setTo(0.5, 0.5);
+  }
+
+  update() {
+
+  }
+
 }
 
 class Mushroom extends Sprite {
+
   constructor(attributes, game, cursors) {
-    super(attributes, game, cursors);
-    if (!this.attributes.image) {
-      this.attributes.image = 'mushroom';
+    if (!attributes.image) {
+      attributes.image = 'mushroom';
     }
+
+    super(attributes, game, cursors);
   }
+
   attachBehaviours() {
     super.attachBehaviours();
   }
-  update() {
-    super.update();
-  }
-}
 
-class Sonic extends Sprite {
-  constructor(attributes, game, cursors) {
-    super(attributes, game, cursors);
-    if (!this.attributes.image) {
-      this.attributes.image = 'sonic';
-    }
-  }
-  attachBehaviours() {
-    super.attachBehaviours();super.attachBehaviours();
-  }
   update() {
     super.update();
   }
-}
 
-class Logo extends Sprite {
-  constructor(attributes, game, cursors) {
-    super(attributes, game, cursors);
-    if (!this.attributes.image) {
-      this.attributes.image = 'logo';
-    }
-  }
-  attachBehaviours() {
-    super.attachBehaviours();
-  }
-  update() {
-    super.update();
-  }
 }
 
 class Pedestrian extends Sprite {
+
   constructor(attributes, game, cursors) {
-    super(attributes, game, cursors);
-    if (!this.attributes.image) {
-      this.attributes.image = 'pedestrian';
+    if (!attributes.image) {
+      attributes.image = 'pedestrian';
     }
+
+    super(attributes, game, cursors);
   }
+
   attachBehaviours() {
-    super.attachBehaviours();
     this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
+
+    super.attachBehaviours();
   }
+
   update() {
     super.update();
   }
+
   yell() {
     console.log(this.name + ' yells.');
   }
+
 }
 
 class Vehicle extends Sprite {
+
   constructor(attributes, game, cursors) {
-    super(attributes, game, cursors);
-    if (!this.attributes.image) {
-      this.attributes.image = 'vehicle';
+    if (!attributes.engine) {
+      attributes.engine = '1.0';
     }
+
+    if (!attributes.horn) {
+      attributes.horn = 'arooga';
+    }
+
+    if (!attributes.image) {
+      attributes.image = 'vehicle';
+    }
+
+    if (!attributes.body) {
+      attributes.body = {};
+    }
+
+    if (!attributes.body.drag) {
+      attributes.body.drag = 10;
+    }
+
+    if (!attributes.body.mass) {
+      attributes.body.mass = 10;
+    }
+
+    if (!attributes.body.maxAngular) {
+      attributes.body.maxAngular = 10;
+    }
+
+    if (!attributes.body.maxVelocity) {
+      attributes.body.maxVelocity = 10;
+    }
+
+    if (!attributes.body.movementAccelerationSpeed) {
+      attributes.body.movementAccelerationSpeed = 10;
+    }
+
+    if (!attributes.body.movementDecelerationSpeed) {
+      attributes.body.movementDecelerationSpeed = 10;
+    }
+
+    if (!attributes.body.turningAccelerationSpeed) {
+      attributes.body.turningAccelerationSpeed = 10;
+    }
+
+    if (!attributes.body.turningDecelerationSpeed) {
+      attributes.body.turningDecelerationSpeed = 10;
+    }
+
+    super(attributes, game, cursors);
   }
+
   attachBehaviours() {
-    super.attachBehaviours();
     this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
+
+    this.sprite.anchor.setTo(0.5, 0.8);
+
+    this.sprite.body.drag.set(100);
+    // this.sprite.body.mass.set(this.attributes.body.mass);
+    // this.sprite.body.maxAngular.set(this.attributes.body.maxAngular);
+    this.sprite.body.maxVelocity.set(this.attributes.body.maxVelocity);
+
+    super.attachBehaviours();
   }
+
   update() {
     super.update();
   }
+
   honk() {
     console.log(this.name + ' honks.');
   }
+
 }
 
 class Car extends Vehicle {
+
   constructor(attributes, game, cursors) {
-    super(attributes, game, cursors);
-    if (!this.attributes.image) {
-      this.attributes.image = 'car';
+    if (!attributes.engine) {
+      attributes.engine = '1.8';
     }
+
+    if (!attributes.horn) {
+      attributes.horn = 'honk';
+    }
+
+    if (!attributes.image) {
+      attributes.image = 'car';
+    }
+
+    if (!attributes.body) {
+      attributes.body = {};
+    }
+
+    if (!attributes.body.drag) {
+      attributes.body.drag = 10;
+    }
+
+    if (!attributes.body.mass) {
+      attributes.body.mass = 10;
+    }
+
+    if (!attributes.body.maxAngular) {
+      attributes.body.maxAngular = 90;
+    }
+
+    if (!attributes.body.maxVelocity) {
+      attributes.body.maxVelocity = 90;
+    }
+
+    if (!attributes.body.movementAccelerationSpeed) {
+      attributes.body.movementAccelerationSpeed = 15;
+    }
+
+    if (!attributes.body.movementDecelerationSpeed) {
+      attributes.body.movementDecelerationSpeed = 5;
+    }
+
+    if (!attributes.body.turningAccelerationSpeed) {
+      attributes.body.turningAccelerationSpeed = 12.5;
+    }
+
+    if (!attributes.body.turningDecelerationSpeed) {
+      attributes.body.turningDecelerationSpeed = 10;
+    }
+
+    super(attributes, game, cursors);
   }
+
   attachBehaviours() {
     super.attachBehaviours();
   }
+
   update() {
     super.update();
   }
+
   honk() {
     super.honk();
     console.log(this.name + ' honks normally.');
   }
+
 }
 
 class Truck extends Vehicle {
+
   constructor(attributes, game, cursors) {
-    super(attributes, game, cursors);
-    if (!this.attributes.image) {
-      this.attributes.image = 'truck';
+    if (!attributes.engine) {
+      attributes.engine = '4.5';
     }
+
+    if (!attributes.horn) {
+      attributes.horn = 'parp';
+    }
+
+    if (!attributes.image) {
+      attributes.image = 'truck';
+    }
+
+    if (!attributes.body) {
+      attributes.body = {};
+    }
+
+    if (!attributes.body.drag) {
+      attributes.body.drag = 10;
+    }
+
+    if (!attributes.body.mass) {
+      attributes.body.mass = 10;
+    }
+
+    if (!attributes.body.maxAngular) {
+      attributes.body.maxAngular = 90;
+    }
+
+    if (!attributes.body.maxVelocity) {
+      attributes.body.maxVelocity = 90;
+    }
+
+    if (!attributes.body.movementAccelerationSpeed) {
+      attributes.body.movementAccelerationSpeed = 15;
+    }
+
+    if (!attributes.body.movementDecelerationSpeed) {
+      attributes.body.movementDecelerationSpeed = 5;
+    }
+
+    if (!attributes.body.turningAccelerationSpeed) {
+      attributes.body.turningAccelerationSpeed = 12.5;
+    }
+
+    if (!attributes.body.turningDecelerationSpeed) {
+      attributes.body.turningDecelerationSpeed = 10;
+    }
+
+    super(attributes, game, cursors);
   }
+
   attachBehaviours() {
     super.attachBehaviours();
   }
+
   update() {
     super.update();
   }
+
   honk() {
     super.honk();
     console.log(this.name + ' honks loudly.');
   }
+
 }
 
 class Motorcycle extends Vehicle {
+
   constructor(attributes, game, cursors) {
-    super(attributes, game, cursors);
-    if (!this.attributes.image) {
-      this.attributes.image = 'motorcycle';
+    if (!attributes.engine) {
+      attributes.engine = '0.6';
     }
+
+    if (!attributes.horn) {
+      attributes.horn = 'toot';
+    }
+
+    if (!attributes.image) {
+      attributes.image = 'motorcycle';
+    }
+
+    if (!attributes.body) {
+      attributes.body = {};
+    }
+
+    if (!attributes.body.drag) {
+      attributes.body.drag = 10;
+    }
+
+    if (!attributes.body.mass) {
+      attributes.body.mass = 10;
+    }
+
+    if (!attributes.body.maxAngular) {
+      attributes.body.maxAngular = 90;
+    }
+
+    if (!attributes.body.maxVelocity) {
+      attributes.body.maxVelocity = 90;
+    }
+
+    if (!attributes.body.movementAccelerationSpeed) {
+      attributes.body.movementAccelerationSpeed = 15;
+    }
+
+    if (!attributes.body.movementDecelerationSpeed) {
+      attributes.body.movementDecelerationSpeed = 5;
+    }
+
+    if (!attributes.body.turningAccelerationSpeed) {
+      attributes.body.turningAccelerationSpeed = 12.5;
+    }
+
+    if (!attributes.body.turningDecelerationSpeed) {
+      attributes.body.turningDecelerationSpeed = 10;
+    }
+
+    super(attributes, game, cursors);
   }
+
   attachBehaviours() {
     super.attachBehaviours();
   }
+
   update() {
     super.update();
   }
+
   honk() {
     super.honk();
     console.log(this.name + ' honks pathetically.');
   }
+
 }
 
 class Player extends Car {
+
   constructor(attributes, game, cursors) {
     super(attributes, game, cursors);
   }
+
   attachBehaviours() {
     super.attachBehaviours();
     this.sprite.fixedToCamera = true;
   }
+
   update() {
-    this.attributes.camera = {
-      x: 4
-    };
-    this.attributes.turningSpeed = 5;
     super.update();
+
+    // this.attributes.camera = {
+    //   x: 4
+    // };
+
+    // this.sprite.body.velocity.x = 0;
+    // this.sprite.body.velocity.y = 0;
+    // this.sprite.body.angularVelocity = 0;
+
+    // if (this.cursors.up.isDown) {
+    //   this.game.physics.arcade.accelerationFromRotation(this.sprite.rotation, 200, this.sprite.body.acceleration);
+    // } else {
+    //   this.sprite.body.acceleration.set(0);
+    // }
+
     if (this.cursors.up.isDown) {
-        this.game.physics.arcade.accelerationFromRotation(this.sprite.rotation, 200, this.sprite.body.acceleration);
-    } else {
-        this.sprite.body.acceleration.set(0);
+      console.log('up', this.sprite.body.velocity, this.sprite.angle);
+      this.game.physics.arcade.velocityFromAngle(this.sprite.angle, 300, this.sprite.body.velocity);
+    } else if (this.cursors.down.isDown) {
+      // if (this.sprite.body.velocity > 0) {
+      //   this.sprite.body.velocity -= ((this.sprite.body.velocity -= this.attributes.body.movementDecelerationSpeed) >= 0) ? this.attributes.body.movementDecelerationSpeed : this.sprite.body.velocity;
+      // }
     }
 
     if (this.cursors.left.isDown) {
-      // this.game.camera.x -= this.attributes.camera.x;
-      // this.sprite.body.angularAcceleration -= this.attributes.body.angularAcceleration;
-      this.sprite.body.angularVelocity -= this.attributes.turningSpeed;
+      console.log('this.attributes.body', this.attributes.body);
+      this.sprite.body.angularVelocity -= this.attributes.body.turningAccelerationSpeed;
     } else if (this.cursors.right.isDown) {
-      // this.game.camera.x += this.attributes.camera.x;
-      // this.sprite.body.angularAcceleration += this.attributes.body.angularAcceleration;
-      this.sprite.body.angularVelocity += this.attributes.turningSpeed;
+      this.sprite.body.angularVelocity += this.attributes.body.turningAccelerationSpeed;
     } else {
-      this.sprite.body.angularVelocity = 0;
+      if (this.sprite.body.angularVelocity > 0) {
+        this.sprite.body.angularVelocity -= this.attributes.body.turningDecelerationSpeed;
+      } else if (this.sprite.body.angularVelocity < 0) {
+        this.sprite.body.angularVelocity += this.attributes.body.turningDecelerationSpeed;
+      }
     }
+
+    // if (this.cursors.SPACEBAR.isDown) {
+    if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
+      console.log('SCREEEECH!');
+    }
+
+    // if (this.cursors.left.isDown) {
+    //   this.sprite.body.angularAcceleration -= this.attributes.body.angularAcceleration;
+    // } else if (this.cursors.right.isDown) {
+    //   this.sprite.body.angularAcceleration += this.attributes.body.angularAcceleration;
+    // }
+
+    // if (this.cursors.left.isDown) {
+    //   this.game.camera.x -= this.attributes.camera.x;
+    // } else if (this.cursors.right.isDown) {
+    //   this.game.camera.x += this.attributes.camera.x;
+    // }
+
   }
+
   yell() {
     console.log(this.name + ' yells uproariously.');
   }
+
 }
 
 (function() {
@@ -247,6 +488,8 @@ class Player extends Car {
     ready: function() {
       this.canvasHeight = '100%';
       this.canvasWidth = '100%';
+      // this.canvasHeight = 800;
+      // this.canvasWidth = 600;
 
       this.state = {
         preload: this.preload,
@@ -259,45 +502,68 @@ class Player extends Car {
     },
 
     preload: function() {
-      this.game.stage.backgroundColor = '#ddd';
+      this.controls = [];
+      this.controls.push(this.game.input.keyboard.createCursorKeys());
+      this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
 
       this.components = {};
 
       this.components['Player 1'] = new Player({
           name: 'Player 1',
           color: '#ff0000',
-          decals: 'stripes'
+          decals: 'stripes',
+          position: {
+            x: 50,
+            y: 50
+          }
         },
         this.game,
-        this.game.input.keyboard.createCursorKeys()
+        this.controls[0]
       );
 
-      // this.components['Toad'] = new Mushroom({
-      //   name: 'Toad',
-      //   color: '#00ff00',
-      //   decals: 'dots'
-      // }, this.game);
+      for (var i = 0; i < 200; i++) {
+        this.components[`Mushroom ${i}`] = new Mushroom({
+            name: `Mushroom ${i}`,
+            color: '#00ff00',
+            decals: 'dots',
+            position: {
+              x: this.game.world.randomX,
+              y: this.game.world.randomY
+            }
+          },
+          this.game
+        );
+      }
 
       Object.keys(this.components).forEach(function(key) {
-        // this.components[key].loadImage(this.game);
         this.components[key].loadImage();
       }, this);
     },
 
     create: function() {
+      this.game.physics.startSystem(Phaser.Physics.ARCADE);
+
+      this.game.stage.backgroundColor = '#ddd';
+
       this.game.world.resize(6000, 600);
 
+      this.mushrooms = this.game.add.group();
+
       Object.keys(this.components).forEach(function(key) {
-        // this.components[key].addSprite(this.game);
-        // this.components[key].attachBehaviours(this.game);
         this.components[key].addSprite();
         this.components[key].attachBehaviours();
+
+        console.log(key.startsWith('Mushroom'));
+        if (key.startsWith('Mushroom')) {
+          this.mushrooms.add(this.components[key].sprite);
+        }
       }, this);
+
+      console.log('this.mushrooms', this.mushrooms);
     },
 
     update: function() {
       Object.keys(this.components).forEach(function(key) {
-        // this.components[key].update(this.game, this.cursors);
         this.components[key].update();
       }, this);
     },
@@ -306,7 +572,12 @@ class Player extends Car {
     },
 
     render: function() {
-      this.game.debug.cameraInfo(this.game.camera, 32, 32);
+      // this.game.debug.cameraInfo(this.game.camera, 32, 32);
+      this.game.debug.spriteInfo(this.components['Player 1'].sprite, 32, 32);
+      this.game.debug.text('angularVelocity: ' + this.components['Player 1'].sprite.body.angularVelocity, 32, 200);
+      this.game.debug.text('angularAcceleration: ' + this.components['Player 1'].sprite.body.angularAcceleration, 32, 232);
+      this.game.debug.text('angularDrag: ' + this.components['Player 1'].sprite.body.angularDrag, 32, 264);
+      this.game.debug.text('deltaZ: ' + this.components['Player 1'].sprite.body.deltaZ(), 32, 296);
     }
 
   });
