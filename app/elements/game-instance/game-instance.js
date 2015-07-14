@@ -37,10 +37,12 @@ class Sprite extends Component {
 
   addSprite() {
     this.sprite = this.game.add.sprite(this.attributes.position.x, this.attributes.position.y, this.attributes.image);
+    this.sprite.anchor.setTo(0.5, 0.5);
+    // this.sprite.fixedToCamera = true;
   }
 
   attachBehaviours() {
-    this.sprite.anchor.setTo(0.5, 0.5);
+
   }
 
   update() {
@@ -119,11 +121,11 @@ class Vehicle extends Sprite {
     }
 
     if (!attributes.body.mass) {
-      attributes.body.mass = 10;
+      attributes.body.mass = 1;
     }
 
     if (!attributes.body.maxAngular) {
-      attributes.body.maxAngular = 10;
+      attributes.body.maxAngular = 10000;
     }
 
     if (!attributes.body.maxVelocity) {
@@ -152,12 +154,13 @@ class Vehicle extends Sprite {
   attachBehaviours() {
     this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
 
-    this.sprite.anchor.setTo(0.5, 0.8);
+    this.sprite.anchor.setTo(0.2, 0.5);
 
     this.sprite.body.drag.set(100);
-    // this.sprite.body.mass.set(this.attributes.body.mass);
-    // this.sprite.body.maxAngular.set(this.attributes.body.maxAngular);
     this.sprite.body.maxVelocity.set(this.attributes.body.maxVelocity);
+
+    this.sprite.body.mass = this.attributes.body.mass;
+    this.sprite.body.maxAngular = this.attributes.body.maxAngular;
 
     super.attachBehaviours();
   }
@@ -200,11 +203,11 @@ class Car extends Vehicle {
     }
 
     if (!attributes.body.maxAngular) {
-      attributes.body.maxAngular = 90;
+      attributes.body.maxAngular = 150;
     }
 
     if (!attributes.body.maxVelocity) {
-      attributes.body.maxVelocity = 90;
+      attributes.body.maxVelocity = 10000;
     }
 
     if (!attributes.body.movementAccelerationSpeed) {
@@ -388,6 +391,7 @@ class Player extends Car {
   attachBehaviours() {
     super.attachBehaviours();
     this.sprite.fixedToCamera = true;
+    this.sprite.enable = false;
   }
 
   update() {
@@ -401,25 +405,12 @@ class Player extends Car {
     // this.sprite.body.velocity.y = 0;
     // this.sprite.body.angularVelocity = 0;
 
-    // if (this.cursors.up.isDown) {
-    //   this.game.physics.arcade.accelerationFromRotation(this.sprite.rotation, 200, this.sprite.body.acceleration);
-    // } else {
-    //   this.sprite.body.acceleration.set(0);
-    // }
-
-    if (this.cursors.up.isDown) {
-      console.log('up', this.sprite.body.velocity, this.sprite.angle);
-      this.game.physics.arcade.velocityFromAngle(this.sprite.angle, 300, this.sprite.body.velocity);
-    } else if (this.cursors.down.isDown) {
-      // if (this.sprite.body.velocity > 0) {
-      //   this.sprite.body.velocity -= ((this.sprite.body.velocity -= this.attributes.body.movementDecelerationSpeed) >= 0) ? this.attributes.body.movementDecelerationSpeed : this.sprite.body.velocity;
-      // }
-    }
-
     if (this.cursors.left.isDown) {
+    // if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
       console.log('this.attributes.body', this.attributes.body);
       this.sprite.body.angularVelocity -= this.attributes.body.turningAccelerationSpeed;
     } else if (this.cursors.right.isDown) {
+    // else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
       this.sprite.body.angularVelocity += this.attributes.body.turningAccelerationSpeed;
     } else {
       if (this.sprite.body.angularVelocity > 0) {
@@ -427,6 +418,17 @@ class Player extends Car {
       } else if (this.sprite.body.angularVelocity < 0) {
         this.sprite.body.angularVelocity += this.attributes.body.turningDecelerationSpeed;
       }
+    }
+
+    if (this.cursors.up.isDown) {
+    // if (game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
+      console.log('up', 'this.sprite.body.velocity', this.sprite.body.velocity, 'this.sprite.angle', this.sprite.angle);
+      this.game.physics.arcade.velocityFromAngle(this.sprite.angle, 3000, this.sprite.body.velocity);
+    } else if (this.cursors.down.isDown) {
+    // if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
+      // if (this.sprite.body.velocity > 0) {
+      //   this.sprite.body.velocity -= ((this.sprite.body.velocity -= this.attributes.body.movementDecelerationSpeed) >= 0) ? this.attributes.body.movementDecelerationSpeed : this.sprite.body.velocity;
+      // }
     }
 
     // if (this.cursors.SPACEBAR.isDown) {
@@ -506,6 +508,8 @@ class Player extends Car {
       this.controls.push(this.game.input.keyboard.createCursorKeys());
       this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
 
+      this.game.load.image('space', 'elements/game-instance/assets/sprites/deep-space.jpg');
+
       this.components = {};
 
       this.components['Player 1'] = new Player({
@@ -513,7 +517,7 @@ class Player extends Car {
           color: '#ff0000',
           decals: 'stripes',
           position: {
-            x: 50,
+            x: 150,
             y: 50
           }
         },
@@ -521,19 +525,19 @@ class Player extends Car {
         this.controls[0]
       );
 
-      for (var i = 0; i < 200; i++) {
-        this.components[`Mushroom ${i}`] = new Mushroom({
-            name: `Mushroom ${i}`,
-            color: '#00ff00',
-            decals: 'dots',
-            position: {
-              x: this.game.world.randomX,
-              y: this.game.world.randomY
-            }
-          },
-          this.game
-        );
-      }
+      // for (var i = 0; i < 200; i++) {
+      //   this.components[`Mushroom ${i}`] = new Mushroom({
+      //       name: `Mushroom ${i}`,
+      //       color: '#00ff00',
+      //       decals: 'dots',
+      //       position: {
+      //         x: this.game.world.randomX,
+      //         y: this.game.world.randomY
+      //       }
+      //     },
+      //     this.game
+      //   );
+      // }
 
       Object.keys(this.components).forEach(function(key) {
         this.components[key].loadImage();
@@ -542,10 +546,15 @@ class Player extends Car {
 
     create: function() {
       this.game.physics.startSystem(Phaser.Physics.ARCADE);
+      // this.game.physics.startSystem(Phaser.Physics.P2JS);
+      //this.game.physics.p2.restitution = 0.9;
+      // this.game.physics.p2.friction = 0.1;
+      //this.game.physics.p2.setImpactEvents(true);
 
-      this.game.stage.backgroundColor = '#ddd';
+      // this.game.stage.backgroundColor = '#ddd';
+      this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'space');
 
-      this.game.world.resize(6000, 600);
+      // this.game.world.resize(6000, 6000);
 
       this.mushrooms = this.game.add.group();
 
@@ -553,13 +562,11 @@ class Player extends Car {
         this.components[key].addSprite();
         this.components[key].attachBehaviours();
 
-        console.log(key.startsWith('Mushroom'));
-        if (key.startsWith('Mushroom')) {
-          this.mushrooms.add(this.components[key].sprite);
-        }
+        // if (key.startsWith('Mushroom')) {
+        //   this.mushrooms.add(this.components[key].sprite);
+        // }
       }, this);
 
-      console.log('this.mushrooms', this.mushrooms);
     },
 
     update: function() {
