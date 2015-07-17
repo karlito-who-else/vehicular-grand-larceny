@@ -49,6 +49,10 @@ class Sprite extends Component {
 
   }
 
+  render() {
+
+  }
+
 }
 
 class Mushroom extends Sprite {
@@ -69,6 +73,10 @@ class Mushroom extends Sprite {
     super.update();
   }
 
+  render() {
+    super.render();
+  }
+
 }
 
 class Pedestrian extends Sprite {
@@ -82,13 +90,18 @@ class Pedestrian extends Sprite {
   }
 
   attachBehaviours() {
-    this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
+    // this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
+    this.game.physics.p2.enable(this.sprite);
 
     super.attachBehaviours();
   }
 
   update() {
     super.update();
+  }
+
+  render() {
+    super.render();
   }
 
   yell() {
@@ -152,21 +165,26 @@ class Vehicle extends Sprite {
   }
 
   attachBehaviours() {
-    this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
+    // this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
+    this.game.physics.p2.enable(this.sprite);
 
     this.sprite.anchor.setTo(0.2, 0.5);
 
-    this.sprite.body.drag.set(100);
-    this.sprite.body.maxVelocity.set(this.attributes.body.maxVelocity);
+    // this.sprite.body.drag.set(this.attributes.body.maxVelocity);
+    // this.sprite.body.maxVelocity.set(this.attributes.body.maxVelocity);
 
     this.sprite.body.mass = this.attributes.body.mass;
-    this.sprite.body.maxAngular = this.attributes.body.maxAngular;
+    // this.sprite.body.maxAngular = this.attributes.body.maxAngular;
 
     super.attachBehaviours();
   }
 
   update() {
     super.update();
+  }
+
+  render() {
+    super.render();
   }
 
   honk() {
@@ -199,7 +217,7 @@ class Car extends Vehicle {
     }
 
     if (!attributes.body.mass) {
-      attributes.body.mass = 10;
+      attributes.body.mass = 100;
     }
 
     if (!attributes.body.maxAngular) {
@@ -235,6 +253,10 @@ class Car extends Vehicle {
 
   update() {
     super.update();
+  }
+
+  render() {
+    super.render();
   }
 
   honk() {
@@ -306,6 +328,10 @@ class Truck extends Vehicle {
     super.update();
   }
 
+  render() {
+    super.render();
+  }
+
   honk() {
     super.honk();
     console.log(this.name + ' honks loudly.');
@@ -375,6 +401,10 @@ class Motorcycle extends Vehicle {
     super.update();
   }
 
+  render() {
+    super.render();
+  }
+
   honk() {
     super.honk();
     console.log(this.name + ' honks pathetically.');
@@ -386,12 +416,22 @@ class Player extends Car {
 
   constructor(attributes, game, cursors) {
     super(attributes, game, cursors);
+
+    if (!attributes.position) {
+      attributes.position = {
+        x: game.world.centerX,
+        y: game.world.centerY
+      };
+    }
+
   }
 
   attachBehaviours() {
     super.attachBehaviours();
-    this.sprite.fixedToCamera = true;
-    this.sprite.enable = false;
+    this.game.camera.follow(this.sprite);
+    this.game.camera.deadzone = new Phaser.Rectangle(100, 100, 600, 400);
+    // this.sprite.fixedToCamera = true;
+    // this.sprite.enable = false;
   }
 
   update() {
@@ -406,12 +446,9 @@ class Player extends Car {
     // this.sprite.body.angularVelocity = 0;
 
     if (this.cursors.left.isDown) {
-    // if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-      console.log('this.attributes.body', this.attributes.body);
-      this.sprite.body.angularVelocity -= this.attributes.body.turningAccelerationSpeed;
+      this.turnLeft();
     } else if (this.cursors.right.isDown) {
-    // else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-      this.sprite.body.angularVelocity += this.attributes.body.turningAccelerationSpeed;
+      this.turnRight();
     } else {
       if (this.sprite.body.angularVelocity > 0) {
         this.sprite.body.angularVelocity -= this.attributes.body.turningDecelerationSpeed;
@@ -421,37 +458,52 @@ class Player extends Car {
     }
 
     if (this.cursors.up.isDown) {
-    // if (game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
-      console.log('up', 'this.sprite.body.velocity', this.sprite.body.velocity, 'this.sprite.angle', this.sprite.angle);
-      this.game.physics.arcade.velocityFromAngle(this.sprite.angle, 3000, this.sprite.body.velocity);
+      this.accelerate();
     } else if (this.cursors.down.isDown) {
-    // if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
-      // if (this.sprite.body.velocity > 0) {
-      //   this.sprite.body.velocity -= ((this.sprite.body.velocity -= this.attributes.body.movementDecelerationSpeed) >= 0) ? this.attributes.body.movementDecelerationSpeed : this.sprite.body.velocity;
-      // }
+      this.decelerate();
     }
 
-    // if (this.cursors.SPACEBAR.isDown) {
     if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
       console.log('SCREEEECH!');
     }
 
-    // if (this.cursors.left.isDown) {
-    //   this.sprite.body.angularAcceleration -= this.attributes.body.angularAcceleration;
-    // } else if (this.cursors.right.isDown) {
-    //   this.sprite.body.angularAcceleration += this.attributes.body.angularAcceleration;
-    // }
+  }
 
-    // if (this.cursors.left.isDown) {
-    //   this.game.camera.x -= this.attributes.camera.x;
-    // } else if (this.cursors.right.isDown) {
-    //   this.game.camera.x += this.attributes.camera.x;
-    // }
+  render() {
+    super.render();
 
+    // let zone = this.game.camera.deadzone;
+    //
+    // this.game.context.fillStyle = 'rgba(255,0,0,0.6)';
+    // this.game.context.fillRect(zone.x, zone.y, zone.width, zone.height);
   }
 
   yell() {
     console.log(this.name + ' yells uproariously.');
+  }
+
+  accelerate() {
+    // console.log('accelerate', 'velocity', this.sprite.body.velocity, 'angle', this.sprite.angle);
+    // this.game.physics.arcade.velocityFromAngle(this.sprite.angle, 3000, this.sprite.body.velocity);
+    this.sprite.body.moveUp(100);
+  }
+
+  decelerate() {
+    // console.log('accelerate', 'velocity', this.sprite.body.velocity, 'angle', this.sprite.angle);
+    // if (this.sprite.body.velocity > 0) {
+    //   this.sprite.body.velocity -= ((this.sprite.body.velocity -= this.attributes.body.movementDecelerationSpeed) >= 0) ? this.attributes.body.movementDecelerationSpeed : this.sprite.body.velocity;
+    // }
+    this.sprite.body.moveDown(100);
+  }
+
+  turnLeft() {
+    // this.sprite.body.angularVelocity -= this.attributes.body.turningAccelerationSpeed;
+    this.sprite.body.moveLeft(100);
+  }
+
+  turnRight() {
+    // this.sprite.body.angularVelocity += this.attributes.body.turningAccelerationSpeed;
+    this.sprite.body.moveRight(100);
   }
 
 }
@@ -508,7 +560,7 @@ class Player extends Car {
       this.controls.push(this.game.input.keyboard.createCursorKeys());
       this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
 
-      this.game.load.image('space', 'elements/game-instance/assets/sprites/deep-space.jpg');
+      this.game.load.image('grid', 'elements/game-instance/assets/sprites/debug-grid-1920x1920.png');
 
       this.components = {};
 
@@ -545,16 +597,20 @@ class Player extends Car {
     },
 
     create: function() {
-      this.game.physics.startSystem(Phaser.Physics.ARCADE);
-      // this.game.physics.startSystem(Phaser.Physics.P2JS);
+      // this.game.physics.startSystem(Phaser.Physics.ARCADE);
+      this.game.physics.startSystem(Phaser.Physics.P2JS);
       //this.game.physics.p2.restitution = 0.9;
       // this.game.physics.p2.friction = 0.1;
       //this.game.physics.p2.setImpactEvents(true);
 
       // this.game.stage.backgroundColor = '#ddd';
-      this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'space');
+      // this.game.add.tileSprite(0, 0, this.game.width, this.game.height, 'grid');
 
       // this.game.world.resize(6000, 6000);
+
+      this.game.add.tileSprite(0, 0, 1920, 1920, 'grid');
+
+      this.game.world.setBounds(0, 0, 1920, 1920);
 
       this.mushrooms = this.game.add.group();
 
@@ -584,7 +640,21 @@ class Player extends Car {
       this.game.debug.text('angularVelocity: ' + this.components['Player 1'].sprite.body.angularVelocity, 32, 200);
       this.game.debug.text('angularAcceleration: ' + this.components['Player 1'].sprite.body.angularAcceleration, 32, 232);
       this.game.debug.text('angularDrag: ' + this.components['Player 1'].sprite.body.angularDrag, 32, 264);
-      this.game.debug.text('deltaZ: ' + this.components['Player 1'].sprite.body.deltaZ(), 32, 296);
+      // this.game.debug.text('deltaZ: ' + this.components['Player 1'].sprite.body.deltaZ(), 32, 296);
+
+      Object.keys(this.components).forEach(function(key) {
+        this.components[key].render();
+      }, this);
+    },
+
+    turnLeft: function() {
+      console.log('this.game', this.game);
+      // this.components['Player 1'].sprite);
+      // this.components['Player 1'].sprite.turnLeft();
+    },
+
+    turnRight: function() {
+      // this.components['Player 1'].sprite.turnRight();
     }
 
   });

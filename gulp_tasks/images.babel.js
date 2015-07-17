@@ -3,9 +3,10 @@
 import debug from 'gulp-debug';
 import gulp from 'gulp';
 import imagemin from 'gulp-imagemin';
-import reportError from './_report-error.babel.js';
+import pngquant from 'imagemin-pngquant';
 
 import config from './_config.babel.js';
+import reportError from './_report-error.babel.js';
 
 const sourceFiles = config.files.images;
 
@@ -14,7 +15,11 @@ gulp.task('images', () => {
     .pipe(debug({
       title: 'images:'
     }))
-    .pipe(imagemin())
+    .pipe(imagemin({
+      progressive: true,
+      // svgoPlugins: [{removeViewBox: false}],
+      use: [pngquant()]
+    }))
     .pipe(gulp.dest(config.path.destination.base))
     .on('error', reportError);
 });
