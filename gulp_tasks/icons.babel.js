@@ -3,7 +3,7 @@
 import debug from 'gulp-debug';
 import gulp from 'gulp';
 import svgSprite from 'gulp-svg-sprite';
-import util from 'gulp-util';
+import reportError from './_report-error.babel.js';
 
 import config from './_config.babel.js';
 
@@ -36,7 +36,7 @@ gulp.task('icons', () => {
       }
     }))
     .pipe(gulp.dest(config.path.destination.icons))
-    .on('error', util.log);
+    .on('error', reportError);
 });
 
 gulp.task('icons:watch', function() {

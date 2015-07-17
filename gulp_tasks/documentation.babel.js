@@ -3,7 +3,7 @@
 import debug from 'gulp-debug';
 import gulp from 'gulp';
 import jsdoc from 'gulp-jsdoc';
-import util from 'gulp-util';
+import reportError from './_report-error.babel.js';
 
 import manifest from '../package.json';
 
@@ -44,7 +44,7 @@ gulp.task('documentation', () => {
       })
     )
     // .pipe(gulp.dest(config.path.destination.documentation))
-    .on('error', util.log);
+    .on('error', reportError);
 });
 
 gulp.task('documentation:watch', function() {

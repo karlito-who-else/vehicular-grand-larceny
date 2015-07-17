@@ -2,7 +2,7 @@
 
 import debug from 'gulp-debug';
 import gulp from 'gulp';
-import util from 'gulp-util';
+import reportError from './_report-error.babel.js';
 
 import config from './_config.babel.js';
 
@@ -17,7 +17,7 @@ gulp.task('copy', () => {
       title: 'copy:'
     }))
     .pipe(gulp.dest(config.path.destination.base))
-    .on('error', util.log);
+    .on('error', reportError);
 });
 
 gulp.task('copy:watch', function() {

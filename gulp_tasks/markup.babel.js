@@ -6,7 +6,7 @@ import htmlhint from 'gulp-htmlhint';
 // import htmltidy from 'gulp-htmltidy';
 import minifyHTML from 'gulp-minify-html';
 
-import util from 'gulp-util';
+import reportError from './_report-error.babel.js';
 
 import {config, browserSync} from './_config.babel.js';
 
@@ -21,7 +21,7 @@ gulp.task('markup', () => {
     // .pipe(htmltidy())
     .pipe(minifyHTML())
     .pipe(gulp.dest(config.path.destination.base))
-    .on('error', util.log);
+    .on('error', reportError);
 });
 
 gulp.task('markup:watch', function() {

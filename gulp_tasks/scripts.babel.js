@@ -11,7 +11,7 @@ import jshint from 'gulp-jshint';
 import sourcemaps from 'gulp-sourcemaps';
 // import typescript from 'gulp-tsc';
 import uglify from 'gulp-uglify';
-import util from 'gulp-util';
+import reportError from './_report-error.babel.js';
 
 // import {config, browserSync} from './_config.babel.js';
 import config from './_config.babel.js';
@@ -41,7 +41,7 @@ gulp.task('scripts', () => {
     .pipe(uglify())
     .pipe(sourcemaps.write('./maps'))
     .pipe(gulp.dest(config.path.destination.base))
-    .on('error', util.log);
+    .on('error', reportError);
 });
 
 gulp.task('scripts:watch', function() {

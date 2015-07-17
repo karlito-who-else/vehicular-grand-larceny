@@ -3,7 +3,7 @@
 import debug from 'gulp-debug';
 import gulp from 'gulp';
 import phantom from 'phantomjs2';
-import util from 'gulp-util';
+import reportError from './_report-error.babel.js';
 import webshot from 'gulp-webshot';
 
 import config from './_config.babel.js';
@@ -20,7 +20,7 @@ gulp.task('screenshots', () => {
       dest: config.path.destination.screenshots,
       root: config.path.source.base
     }))
-    .on('error', util.log);
+    .on('error', reportError);
 });
 
 gulp.task('screenshots:watch', function() {

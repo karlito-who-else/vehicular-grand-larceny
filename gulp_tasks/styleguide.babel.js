@@ -3,7 +3,7 @@
 import debug from 'gulp-debug';
 import dss from 'gulp-dss';
 import gulp from 'gulp';
-import util from 'gulp-util';
+import reportError from './_report-error.babel.js';
 
 import config from './_config.babel.js';
 
@@ -19,7 +19,7 @@ gulp.task('styleguide', () => {
       templatePath: config.path.source.styleguide + '/templates'
     }))
     .pipe(gulp.dest(config.path.destination.styleguide))
-    .on('error', util.log);
+    .on('error', reportError);
 });
 
 gulp.task('styleguide:watch', function() {

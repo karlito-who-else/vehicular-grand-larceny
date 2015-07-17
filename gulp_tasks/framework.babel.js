@@ -8,7 +8,7 @@ import jshint from 'gulp-jshint';
 import jsonlint from 'gulp-jsonlint';
 // import typescript from 'gulp-tsc';
 import yamlvalidate from 'gulp-yaml-validate';
-import util from 'gulp-util';
+import reportError from './_report-error.babel.js';
 
 import config from './_config.babel.js';
 
@@ -28,22 +28,22 @@ gulp.task('framework', () => {
     //   allowimportmodule: true,
     //   target: 'ES6'
     // }))
-    .on('error', util.log);
+    .on('error', reportError);
 
   gulp.src(config.files.configuration.json)
     .pipe(debug({
       title: 'framework (configuration:json):'
     }))
     .pipe(jsonlint())
-    .pipe(jsonlint.reporter(util.log))
-    .on('error', util.log);
+    .pipe(jsonlint.reporter(reportError))
+    .on('error', reportError);
 
   gulp.src(config.files.configuration.yaml)
     .pipe(debug({
       title: 'framework (configuration:yaml):'
     }))
     .pipe(yamlvalidate())
-    .on('error', util.log);
+    .on('error', reportError);
 });
 
 gulp.task('framework:watch', function() {

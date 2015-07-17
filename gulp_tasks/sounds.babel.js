@@ -3,7 +3,7 @@
 import debug from 'gulp-debug';
 import ffmpeg from 'gulp-fluent-ffmpeg';
 import gulp from 'gulp';
-import util from 'gulp-util';
+import reportError from './_report-error.babel.js';
 
 import config from './_config.babel.js';
 
@@ -34,10 +34,10 @@ gulp.task('sounds', () => {
         .on('end', function() {
           console.log('sounds: Processing finished');
         })
-        .on('error', util.log);
+        .on('error', reportError);
     }))
     .pipe(gulp.dest(config.path.destination.base))
-    .on('error', util.log);
+    .on('error', reportError);
 });
 
 gulp.task('sounds:watch', function() {

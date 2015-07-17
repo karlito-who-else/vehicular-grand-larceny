@@ -10,7 +10,7 @@ import remember from 'gulp-remember';
 import sass from 'gulp-sass';
 import sourcemaps from 'gulp-sourcemaps';
 // import uncss from 'gulp-uncss';
-import util from 'gulp-util';
+import reportError from './_report-error.babel.js';
 
 import {config, browserSync} from './_config.babel.js';
 
@@ -50,7 +50,7 @@ gulp.task('styles', () => {
     // .pipe(sourcemaps.write('./maps')) // Causes the page to be reloaded after the styles are injected.  This was working, I'm not sure what changed.
     .pipe(gulp.dest(config.path.destination.base))
     .pipe(browserSync.stream({match: '**/*.css'}))
-    .on('error', util.log);
+    .on('error', reportError);
 });
 
 gulp.task('styles:watch', function() {

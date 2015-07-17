@@ -3,7 +3,7 @@
 // import debug from 'gulp-debug';
 import gulp from 'gulp';
 import {output as pagespeed} from 'psi';
-import util from 'gulp-util';
+import reportError from './_report-error.babel.js';
 
 import config from './_config.babel.js';
 
@@ -14,5 +14,5 @@ gulp.task('pagespeed', cb => {
     // Use a Google Developer API key if you have one: http://goo.gl/RkN0vE
     key: config.instance.pagespeed.key
   }, cb)
-  .on('error', util.log);
+  .on('error', reportError);
 });
