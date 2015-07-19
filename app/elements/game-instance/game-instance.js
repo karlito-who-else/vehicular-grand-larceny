@@ -3,6 +3,90 @@
 // import car from './entities/car.js';
 // console.log('car', car);
 
+class Controls {
+
+  constructor(attributes, game) {
+    this.attributes = attributes;
+    this.game = game;
+  }
+
+}
+
+class KeyboardControls extends Controls {
+
+  constructor(attributes, game) {
+    super(attributes, game);
+
+    this.type = game.input.keyboard;
+
+    this.defineLayout();
+  }
+
+  defineLayout(layout) {
+    this.input = {};
+
+    switch (this.attributes.layout) {
+      case 'layout-1':
+        this.game.input.keyboard.createCursorKeys();
+        this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
+        this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.TAB]);
+
+        this.input.up = Phaser.Keyboard.UP;
+        this.input.down = Phaser.Keyboard.DOWN;
+        this.input.left = Phaser.Keyboard.LEFT;
+        this.input.right = Phaser.Keyboard.RIGHT;
+
+        this.input.accelerate = Phaser.Keyboard.W;
+        this.input.handbrake = Phaser.Keyboard.SPACEBAR;
+        this.input.honk = Phaser.Keyboard.TAB;
+        this.input.reverse = Phaser.Keyboard.S;
+        this.input.shoot = Phaser.Keyboard.CONTROL;
+      break;
+      case 'layout-2':
+        this.input.up = Phaser.Keyboard.W;
+        this.input.down = Phaser.Keyboard.S;
+        this.input.left = Phaser.Keyboard.A;
+        this.input.right = Phaser.Keyboard.D;
+      break;
+    }
+  }
+
+}
+
+class GamepadControls extends Controls {
+
+  constructor(attributes, game) {
+    super(attributes, game);
+
+    this.type = game.input.gamepad;
+
+    this.defineLayout();
+  }
+
+  defineLayout(layout) {
+    switch (this.attributes.layout) {
+      case 'layout-1':
+        this.input.up = Phaser.Gamepad.XBOX360_DPAD_UP;
+        this.input.down = Phaser.Gamepad.XBOX360_DPAD_DOWN;
+        this.input.left = Phaser.Gamepad.XBOX360_DPAD_LEFT;
+        this.input.right = Phaser.Gamepad.XBOX360_DPAD_RIGHT;
+
+        this.input.accelerate = Phaser.Gamepad.XBOX360_A;
+        this.input.reverse = Phaser.Gamepad.XBOX360_B;
+        this.input.handbrake = Phaser.Gamepad.XBOX360_X;
+        this.input.shoot = Phaser.Gamepad.XBOX360_Y;
+
+        // this.input.weaponNext = Phaser.Gamepad.XBOX360_A;
+        // this.input.weaponPrevious = Phaser.Gamepad.XBOX360_A;
+      break;
+      case 'layout-2':
+
+      break;
+    }
+  }
+
+}
+
 class Component {
 
   constructor(attributes, game) {
@@ -38,7 +122,7 @@ class Sprite extends Component {
       attributes.body.data.damping = 0.9;
     }
 
-    super(attributes, game, cursors);
+    super(attributes, game);
   }
 
   loadImage() { //make static to allow preloading without first initialising game and cursors?
@@ -67,6 +151,10 @@ class Sprite extends Component {
   }
 
   attachControls(controls) {
+    console.log('controls', controls);
+
+    // controls.attachToPlayer(this.sprite);
+
     this.controls = controls;
   }
 
@@ -123,7 +211,7 @@ class Pedestrian extends Sprite {
       attributes.body.data.damping = 0.95;
     }
 
-    super(attributes, game, cursors);
+    super(attributes, game);
   }
 
   attachBehaviours() {
@@ -222,8 +310,16 @@ class Vehicle extends Sprite {
     super.render();
   }
 
+  handbrake() {
+    console.log('SCREEEECH!');
+  }
+
   honk() {
     console.log(this.name + ' honks.');
+  }
+
+  shoot() {
+    console.log(this.name + ' shoots.');
   }
 
   accelerate() {
@@ -250,14 +346,14 @@ class Vehicle extends Sprite {
   }
 
   turnLeft() {
-    console.log('this.attributes.body', this.attributes.body);
+    // console.log('this.attributes.body', this.attributes.body);
     this.sprite.body.angularForce -= this.attributes.body.turningAccelerationSpeed;
     // this.sprite.body.moveLeft(100);
     // this.sprite.body.rotateLeft(this.attributes.body.turningAccelerationSpeed);
   }
 
   turnRight() {
-    console.log('this.attributes.body', this.attributes.body);
+    // console.log('this.attributes.body', this.attributes.body);
     this.sprite.body.angularForce += this.attributes.body.turningAccelerationSpeed;
     // this.sprite.body.moveRight(100);
     // this.sprite.body.rotateRight(this.attributes.body.turningAccelerationSpeed);
@@ -486,7 +582,7 @@ class Motorcycle extends Vehicle {
 
 class Jetpack extends Vehicle {
 
-  constructor(attributes, game, cursors) {
+  constructor(attributes, game) {
     if (!attributes.engine) {
       attributes.engine = '10';
     }
@@ -535,7 +631,7 @@ class Jetpack extends Vehicle {
       attributes.body.turningDecelerationSpeed = 25;
     }
 
-    super(attributes, game, cursors);
+    super(attributes, game);
   }
 
   attachBehaviours() {
@@ -590,22 +686,34 @@ class Player extends Car {
     // this.sprite.body.velocity.y = 0;
     // this.sprite.body.angularVelocity = 0;
 
-    if (this.controls.left.isDown) {
+    if (this.controls.type.isDown(this.controls.input.left)) {
+      console.log('this.controls.input.left.isDown');
       this.turnLeft();
-    } else if (this.controls.right.isDown) {
+    } else if (this.controls.type.isDown(this.controls.input.right)) {
+      console.log('this.controls.input.right.isDown');
       this.turnRight();
     } else {
       this.decelerate();
     }
 
-    if (this.controls.up.isDown) {
+    if (this.controls.type.isDown(this.controls.input.up)) {
+      console.log('this.controls.input.up.isDown');
       this.accelerate();
-    } else if (this.controls.down.isDown) {
+    } else if (this.controls.type.isDown(this.controls.input.down)) {
+      console.log('this.controls.input.down.isDown');
       this.decelerate();
     }
 
-    if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
-      console.log('SCREEEECH!');
+    if (this.controls.type.isDown(this.controls.input.handbrake)) {
+      this.handbrake();
+    }
+
+    if (this.controls.type.isDown(this.controls.input.honk)) {
+      this.honk();
+    }
+
+    if (this.controls.type.isDown(this.controls.input.shoot)) {
+      this.shoot();
     }
 
   }
@@ -686,41 +794,28 @@ class Player extends Car {
               y: 50
             }
           },
-          _this.gam
+          _this.game
         );
 
-        // for (var i = 0; i < 200; i++) {
-        //   _this.components[`Mushroom ${i}`] = new Mushroom({
-        //       name: `Mushroom ${i}`,
-        //       color: '#00ff00',
-        //       decals: 'dots',
-        //       position: {
-        //         x: _this.game.world.randomX,
-        //         y: _this.game.world.randomY
-        //       }
-        //     },
-        //     _this.game
-        //   );
-        // }
-      }
-
-      function preloadControls() {
-        _this.controls = [];
-
-        _this.controls.push(_this.game.input.keyboard.createCursorKeys());
-
-        _this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
+        for (var i = 0; i < 200; i++) {
+          _this.components[`Mushroom ${i}`] = new Mushroom({
+              name: `Mushroom ${i}`,
+              color: '#00ff00',
+              decals: 'dots'
+            },
+            _this.game
+          );
+        }
       }
 
       function preloadImages() {
+        _this.game.load.image('grid', 'elements/game-instance/assets/sprites/debug-grid-1920x1920.png');
+
         Object.keys(_this.components).forEach(function(key) {
           _this.components[key].loadImage();
         }, _this);
-
-        _this.game.load.image('grid', 'elements/game-instance/assets/sprites/debug-grid-1920x1920.png');
       }
 
-      preloadControls();
       preloadComponents();
       preloadImages();
     },
@@ -735,24 +830,22 @@ class Player extends Car {
           _this.components[key].addSprite();
           _this.components[key].attachBehaviours();
 
-          // if (key.startsWith('Mushroom')) {
-          //   _this.mushrooms.add(_this.components[key].sprite);
-          // }
+          if (_this.components[key] instanceof Mushroom) {
+            _this.mushrooms.add(_this.components[key].sprite);
+          }
         }, _this);
+      }
+
+      function createControls() {
+        _this.components['Player 1'].attachControls(new KeyboardControls({
+          layout: 'layout-1'
+        }, _this.game));
       }
 
       function createPhysics() {
         // _this.game.physics.startSystem(Phaser.Physics.ARCADE);
         _this.game.physics.startSystem(Phaser.Physics.P2JS);
-
-      this.controls = [];
-      this.controls.push(this.game.input.keyboard.createCursorKeys());
-      this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
-
-      Object.keys(this.components).forEach(function(key) {
-        this.components[key].addSprite();
-        this.components[key].attachBehaviours();
-        this.components[key].attachControls(this.controls[0]);
+      }
 
       function createWorld() {
         // _this.game.add.tileSprite(0, 0, _this.game.width, _this.game.height, 'grid');
@@ -764,6 +857,7 @@ class Player extends Car {
 
       createWorld();
       createPhysics();
+      createControls();
       createComponents();
     },
 
@@ -791,14 +885,7 @@ class Player extends Car {
     },
 
     resize: function() {
-    },
 
-    turnLeft: function() {
-      // this.components['Player 1'].sprite.turnLeft();
-    },
-
-    turnRight: function() {
-      // this.components['Player 1'].sprite.turnRight();
     }
 
   });
