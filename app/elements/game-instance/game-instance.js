@@ -5,17 +5,16 @@
 
 class Component {
 
-  constructor(attributes, game, cursors) {
+  constructor(attributes, game) {
     this.attributes = attributes;
     this.game = game;
-    this.cursors = cursors;
   }
 
 }
 
 class Sprite extends Component {
 
-  constructor(attributes, game, cursors) {
+  constructor(attributes, game) {
     if (!attributes.image) {
       attributes.image = 'sprite';
     }
@@ -27,7 +26,7 @@ class Sprite extends Component {
       };
     }
 
-    super(attributes, game, cursors);
+    super(attributes, game);
   }
 
   loadImage() { //make static to allow preloading without first initialising game and cursors?
@@ -45,6 +44,10 @@ class Sprite extends Component {
 
   }
 
+  attachControls(controls) {
+    this.controls = controls;
+  }
+
   update() {
 
   }
@@ -57,12 +60,12 @@ class Sprite extends Component {
 
 class Mushroom extends Sprite {
 
-  constructor(attributes, game, cursors) {
+  constructor(attributes, game) {
     if (!attributes.image) {
       attributes.image = 'mushroom';
     }
 
-    super(attributes, game, cursors);
+    super(attributes, game);
   }
 
   attachBehaviours() {
@@ -81,12 +84,12 @@ class Mushroom extends Sprite {
 
 class Pedestrian extends Sprite {
 
-  constructor(attributes, game, cursors) {
+  constructor(attributes, game) {
     if (!attributes.image) {
       attributes.image = 'pedestrian';
     }
 
-    super(attributes, game, cursors);
+    super(attributes, game);
   }
 
   attachBehaviours() {
@@ -112,7 +115,7 @@ class Pedestrian extends Sprite {
 
 class Vehicle extends Sprite {
 
-  constructor(attributes, game, cursors) {
+  constructor(attributes, game) {
     if (!attributes.engine) {
       attributes.engine = '1.0';
     }
@@ -161,7 +164,7 @@ class Vehicle extends Sprite {
       attributes.body.turningDecelerationSpeed = 10;
     }
 
-    super(attributes, game, cursors);
+    super(attributes, game);
   }
 
   attachBehaviours() {
@@ -195,7 +198,7 @@ class Vehicle extends Sprite {
 
 class Car extends Vehicle {
 
-  constructor(attributes, game, cursors) {
+  constructor(attributes, game) {
     if (!attributes.engine) {
       attributes.engine = '1.8';
     }
@@ -244,7 +247,7 @@ class Car extends Vehicle {
       attributes.body.turningDecelerationSpeed = 10;
     }
 
-    super(attributes, game, cursors);
+    super(attributes, game);
   }
 
   attachBehaviours() {
@@ -268,7 +271,7 @@ class Car extends Vehicle {
 
 class Truck extends Vehicle {
 
-  constructor(attributes, game, cursors) {
+  constructor(attributes, game) {
     if (!attributes.engine) {
       attributes.engine = '4.5';
     }
@@ -317,7 +320,7 @@ class Truck extends Vehicle {
       attributes.body.turningDecelerationSpeed = 10;
     }
 
-    super(attributes, game, cursors);
+    super(attributes, game);
   }
 
   attachBehaviours() {
@@ -341,7 +344,7 @@ class Truck extends Vehicle {
 
 class Motorcycle extends Vehicle {
 
-  constructor(attributes, game, cursors) {
+  constructor(attributes, game) {
     if (!attributes.engine) {
       attributes.engine = '0.6';
     }
@@ -390,7 +393,7 @@ class Motorcycle extends Vehicle {
       attributes.body.turningDecelerationSpeed = 10;
     }
 
-    super(attributes, game, cursors);
+    super(attributes, game);
   }
 
   attachBehaviours() {
@@ -414,8 +417,8 @@ class Motorcycle extends Vehicle {
 
 class Player extends Car {
 
-  constructor(attributes, game, cursors) {
-    super(attributes, game, cursors);
+  constructor(attributes, game) {
+    super(attributes, game);
 
     if (!attributes.position) {
       attributes.position = {
@@ -445,9 +448,9 @@ class Player extends Car {
     // this.sprite.body.velocity.y = 0;
     // this.sprite.body.angularVelocity = 0;
 
-    if (this.cursors.left.isDown) {
+    if (this.controls.left.isDown) {
       this.turnLeft();
-    } else if (this.cursors.right.isDown) {
+    } else if (this.controls.right.isDown) {
       this.turnRight();
     } else {
       if (this.sprite.body.angularVelocity > 0) {
@@ -457,9 +460,9 @@ class Player extends Car {
       }
     }
 
-    if (this.cursors.up.isDown) {
+    if (this.controls.up.isDown) {
       this.accelerate();
-    } else if (this.cursors.down.isDown) {
+    } else if (this.controls.down.isDown) {
       this.decelerate();
     }
 
@@ -484,26 +487,26 @@ class Player extends Car {
 
   accelerate() {
     // console.log('accelerate', 'velocity', this.sprite.body.velocity, 'angle', this.sprite.angle);
-    // this.game.physics.arcade.velocityFromAngle(this.sprite.angle, 3000, this.sprite.body.velocity);
-    this.sprite.body.moveUp(100);
+    this.game.physics.arcade.velocityFromAngle(this.sprite.angle, 3000, this.sprite.body.velocity);
+    // this.sprite.body.moveUp(100);
   }
 
   decelerate() {
     // console.log('accelerate', 'velocity', this.sprite.body.velocity, 'angle', this.sprite.angle);
-    // if (this.sprite.body.velocity > 0) {
-    //   this.sprite.body.velocity -= ((this.sprite.body.velocity -= this.attributes.body.movementDecelerationSpeed) >= 0) ? this.attributes.body.movementDecelerationSpeed : this.sprite.body.velocity;
-    // }
-    this.sprite.body.moveDown(100);
+    if (this.sprite.body.velocity > 0) {
+      this.sprite.body.velocity -= ((this.sprite.body.velocity -= this.attributes.body.movementDecelerationSpeed) >= 0) ? this.attributes.body.movementDecelerationSpeed : this.sprite.body.velocity;
+    }
+    // this.sprite.body.moveDown(100);
   }
 
   turnLeft() {
-    // this.sprite.body.angularVelocity -= this.attributes.body.turningAccelerationSpeed;
-    this.sprite.body.moveLeft(100);
+    this.sprite.body.angularVelocity -= this.attributes.body.turningAccelerationSpeed;
+    // this.sprite.body.moveLeft(100);
   }
 
   turnRight() {
-    // this.sprite.body.angularVelocity += this.attributes.body.turningAccelerationSpeed;
-    this.sprite.body.moveRight(100);
+    this.sprite.body.angularVelocity += this.attributes.body.turningAccelerationSpeed;
+    // this.sprite.body.moveRight(100);
   }
 
 }
@@ -556,10 +559,6 @@ class Player extends Car {
     },
 
     preload: function() {
-      this.controls = [];
-      this.controls.push(this.game.input.keyboard.createCursorKeys());
-      this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
-
       this.game.load.image('grid', 'elements/game-instance/assets/sprites/debug-grid-1920x1920.png');
 
       this.components = {};
@@ -573,8 +572,7 @@ class Player extends Car {
             y: 50
           }
         },
-        this.game,
-        this.controls[0]
+        this.game
       );
 
       // for (var i = 0; i < 200; i++) {
@@ -614,9 +612,14 @@ class Player extends Car {
 
       this.mushrooms = this.game.add.group();
 
+      this.controls = [];
+      this.controls.push(this.game.input.keyboard.createCursorKeys());
+      this.game.input.keyboard.addKeyCapture([Phaser.Keyboard.SPACEBAR]);
+
       Object.keys(this.components).forEach(function(key) {
         this.components[key].addSprite();
         this.components[key].attachBehaviours();
+        this.components[key].attachControls(this.controls[0]);
 
         // if (key.startsWith('Mushroom')) {
         //   this.mushrooms.add(this.components[key].sprite);
@@ -632,6 +635,7 @@ class Player extends Car {
     },
 
     resize: function() {
+
     },
 
     render: function() {
