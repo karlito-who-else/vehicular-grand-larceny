@@ -1,5 +1,8 @@
 'use strict';
 
+// import car from './entities/car.js';
+// console.log('car', car);
+
 if (!Object.assign) {
   Object.defineProperty(Object, 'assign', {
     enumerable: false,
@@ -32,9 +35,6 @@ if (!Object.assign) {
     }
   });
 }
-
-// import car from './entities/car.js';
-// console.log('car', car);
 
 class Controls {
 
@@ -132,9 +132,9 @@ class Component {
 class Sprite extends Component {
 
   constructor(attributes, game) {
-    if (!attributes.image) {
-      attributes.image = 'sprite';
-    }
+    attributes = Object.assign({
+      image: 'sprite'
+    }, attributes);
 
     if (!attributes.position) {
       attributes.position = {
@@ -143,49 +143,26 @@ class Sprite extends Component {
       };
     }
 
-    if (!attributes.body) {
-      attributes.body = {};
-    }
-
-    if (!attributes.body.data) {
-      attributes.body.data = {};
-    }
-
     super(attributes, game);
   }
 
   loadImage() { //make static to allow preloading without first initialising game and cursors?
     let image = this.attributes.image;
+
     this.game.load.image(image, `elements/game-instance/assets/sprites/${image}.png`);
   }
 
   addSprite() {
     this.sprite = this.game.add.sprite(this.attributes.position.x, this.attributes.position.y, this.attributes.image);
+
     this.sprite.anchor.setTo(0.5, 0.5);
-    // this.sprite.fixedToCamera = true;
   }
 
   applyPhysics() {
     // this.game.physics.enable(this.sprite, Phaser.Physics.ARCADE);
     this.game.physics.p2.enable(this.sprite);
 
-    console.log('this.sprite.body', this.sprite.body);
-    console.log('this.attributes.body', this.attributes.body);
-
-    // this.sprite.body = this.attributes.body; //KJP: It broke here
-
-    // let data = this.attributes.body.data;
-    // delete this.attributes.body.data;
-
-    // this.sprite.body = Object.assign(this.attributes.body);
-    // this.sprite.body.data = Object.assign(this.attributes.body.data);
-
-    // this.sprite.body.drag.set(this.attributes.body.maxVelocity);
-    // this.sprite.body.maxVelocity.set(this.attributes.body.maxVelocity);
-    // this.sprite.body.mass = this.attributes.body.mass;
-    // this.sprite.body.maxAngular = this.attributes.body.maxAngular;
-    this.sprite.body.angularDamping = this.attributes.body.angularDamping;
-    this.sprite.body.damping = this.attributes.body.damping;
+    this.sprite.body = Object.assign(this.sprite.body, this.attributes.body);
   }
 
   attachBehaviours() {
@@ -193,8 +170,6 @@ class Sprite extends Component {
   }
 
   attachControls(controls) {
-    console.log('controls', controls);
-
     this.controls = controls;
   }
 
@@ -206,14 +181,39 @@ class Sprite extends Component {
 
   }
 
+  get averageMagnitude() {
+    return ((this.sprite.body.data.velocity[0] + this.sprite.body.data.velocity[1]) * 0.5);
+  }
+
+  get rotationSpeed() {
+    let counter = 0;
+
+    let increase = Math.PI / 100; // 100 iterations
+
+    for (let i = 0; i <= 1; i += 0.01) {
+      let x = i;
+      let y = Math.sin(counter);
+
+      if (i <= 0.5) {
+        counter += increase;
+      } else {
+        counter += (increase * 0.5);
+      }
+    }
+
+    let rotationSpeed = Math.abs(this.attributes.body.turnSpeed * this.averageMagnitude);
+
+    return rotationSpeed;
+  }
+
 }
 
 class Mushroom extends Sprite {
 
   constructor(attributes, game) {
-    if (!attributes.image) {
-      attributes.image = 'mushroom';
-    }
+    attributes = Object.assign({
+      image: 'mushroom'
+    }, attributes);
 
     super(attributes, game);
   }
@@ -235,21 +235,9 @@ class Mushroom extends Sprite {
 class Pedestrian extends Sprite {
 
   constructor(attributes, game) {
-    if (!attributes.image) {
-      attributes.image = 'pedestrian';
-    }
-
-    if (!attributes.body) {
-      attributes.body = {};
-    }
-
-    if (!attributes.body.data) {
-      attributes.body.data = {};
-    }
-
-    // if (!attributes.body.data.damping) {
-    //   attributes.body.data.damping = 0.95;
-    // }
+    attributes = Object.assign({
+      image: 'pedestrian'
+    }, attributes);
 
     super(attributes, game);
   }
@@ -276,69 +264,26 @@ class Pedestrian extends Sprite {
 class Vehicle extends Sprite {
 
   constructor(attributes, game) {
-    if (!attributes.engine) {
-      attributes.engine = '1.0';
-    }
-
-    if (!attributes.horn) {
-      attributes.horn = 'arooga';
-    }
-
-    if (!attributes.image) {
-      attributes.image = 'vehicle';
-    }
-
-    if (!attributes.body) {
-      attributes.body = {};
-    }
-
-    if (!attributes.body.AccelerateSpeed) {
-      attributes.body.AccelerateSpeed = 120;
-    }
-
-    if (!attributes.body.AccelerateReverseSpeed) {
-      attributes.body.AccelerateReverseSpeed = 40;
-    }
-
-    if (!attributes.body.decelerateSpeed) {
-      attributes.body.decelerateSpeed = 80;
-    }
-
-    if (!attributes.body.brakeSpeed) {
-      attributes.body.brakeSpeed = 80;
-    }
-
-    if (!attributes.body.handbrakeSpeed) {
-      attributes.body.handbrakeSpeed = 60;
-    }
-
-    if (!attributes.body.turnSpeed) {
-      attributes.body.turnSpeed = 20;
-    }
-
-    if (!attributes.body.turnResetSpeed) {
-      attributes.body.turnResetSpeed = 20;
-    }
-
-    if (!attributes.body.drag) {
-      attributes.body.drag = 10;
-    }
-
-    if (!attributes.body.mass) {
-      attributes.body.mass = 0.5;
-    }
-
-    if (!attributes.body.damping) {
-      attributes.body.damping = 0.85;
-    }
-
-    if (!attributes.body.angularDamping) {
-      attributes.body.angularDamping = 0.75;
-    }
-
-    if (!attributes.body.angularVelocity) {
-      attributes.body.angularVelocity = 1000;
-    }
+    attributes = Object.assign({
+      engine: '1.0',
+      horn: 'arooga',
+      image: 'vehicle',
+      body: {
+        angularDamping: 0.75,
+        // angularVelocity: 1000,
+        damping: 0.85,
+        drag: 100,
+        mass: 0.5
+      },
+      properties: {
+        accelerateForwardSpeed: 300,
+        accelerateReverseSpeed: 40,
+        brakeSpeed: 80,
+        handbrakeSpeed: 60,
+        turnResetSpeed: 20,
+        turnSpeed: 10
+      }
+    }, attributes);
 
     super(attributes, game);
   }
@@ -348,6 +293,7 @@ class Vehicle extends Sprite {
     this.applyPhysics();
 
     this.sprite.anchor.setTo(0.5, 0.8);
+    // this.sprite.adjustCenterOfMass();
   }
 
   update() {
@@ -362,13 +308,10 @@ class Vehicle extends Sprite {
     console.log('SCREEEECH!');
 
     if (this.sprite.body.angularVelocity > 0.1) {
-      this.sprite.body.angularVelocity -= speed ? speed : this.attributes.body.handbrakeSpeed;
+      this.sprite.body.angularVelocity -= speed ? speed : this.attributes.properties.handbrakeSpeed;
     } else if (this.sprite.body.angularVelocity < -0.1) {
-      this.sprite.body.angularVelocity += speed ? speed : this.attributes.body.handbrakeSpeed;
+      this.sprite.body.angularVelocity += speed ? speed : this.attributes.properties.handbrakeSpeed;
     }
-    //  else {
-    //   this.sprite.body.setZeroVelocity();
-    // }
   }
 
   honk() {
@@ -380,67 +323,59 @@ class Vehicle extends Sprite {
   }
 
   drive(ordinate) {
-    console.log('drive', 'ordinate', ordinate, 'body', this.attributes.body);
-
+    // console.log('drive', 'ordinate', ordinate, 'body', this.attributes.body);
     if (ordinate > 0.1) {
       thrust(ordinate);
     } else if (ordinate < -0.1) {
       reverse(ordinate);
     }
-    //  else {
-    //   this.sprite.body.setZeroVelocity();
-    // }
   }
 
   thrust(speed) {
-    console.log('thrust', 'speed', speed, 'body', this.attributes.body);
-    // this.game.physics.arcade.velocityFromAngle(this.sprite.angle, 3000, this.sprite.body.velocity);
-    // this.sprite.body.moveUp(100);
-    this.sprite.body.thrust(speed ? speed : this.attributes.body.AccelerateSpeed);
+    // console.log('thrust', 'speed', speed, 'body', this.attributes.body);
+    speed ? (parseInt(speed) === speed) : this.attributes.properties.accelerateForwardSpeed;
+    this.sprite.body.thrust(speed);
   }
 
   reverse(speed) {
-    console.log('reverse', 'speed', speed, 'body', this.attributes.body);
-    // this.sprite.body.moveDown(100);
-    this.sprite.body.reverse(speed ? speed : this.attributes.body.AccelerateReverseSpeed);
+    // console.log('reverse', 'speed', speed, 'body', this.attributes.body);
+    speed ? (parseInt(speed) === speed) : this.attributes.properties.accelerateReverseSpeed;
+    console.log('speed', speed);
+    this.sprite.body.reverse(speed);
   }
 
   brake(speed) {
     // console.log('brake', 'speed', speed, 'body', this.attributes.body);
+    speed ? (parseInt(speed) === speed) : this.attributes.properties.brakeSpeed;
 
-    // if (this.sprite.body.velocity > 0) {
-    //   this.sprite.body.velocity -= ((this.sprite.body.velocity -= this.attributes.body.AccelerateReverseSpeed) >= 0) ? this.attributes.body.AccelerateReverseSpeed : this.sprite.body.velocity;
-    // }
-
-    if (this.sprite.body.angularVelocity > 0.1) {
-      this.sprite.body.angularVelocity -= speed ? speed : this.attributes.body.brakeSpeed;
-    } else if (this.sprite.body.angularVelocity < -0.1) {
-      this.sprite.body.angularVelocity += speed ? speed : this.attributes.body.brakeSpeed;
-    }
-    //  else {
-    //   this.sprite.body.setZeroVelocity();
+    // this.averageMagnitude with direction?
+    //
+    // if (this.sprite.body.angularVelocity > 0.1) {
+    //   this.sprite.body.angularVelocity -= speed;
+    // } else if (this.sprite.body.angularVelocity < -0.1) {
+    //   this.sprite.body.angularVelocity += speed;
     // }
   }
 
   turn(abscissa) {
-    console.log('turn', 'abscissa', abscissa, 'body', this.attributes.body);
+    // console.log('turn', 'abscissa', abscissa, 'body', this.attributes.body);
+    if (abscissa > 0.1) {
+      turnLeft(abscissa);
+    } else if (abscissa < -0.1) {
+      turnRight(abscissa);
+    }
   }
 
   turnLeft() {
-    console.log('turnLeft', 'body', this.attributes.body);
-
-    // this.sprite.body.rotateLeft(this.attributes.body.turnSpeed);
-    // this.sprite.body.angularForce -= this.attributes.body.turnSpeed;
-    // this.sprite.body.moveLeft(100);
-    this.sprite.body.rotateLeft(this.attributes.body.turnSpeed);
+    // console.log('turnLeft', 'body', this.attributes.body);
+    // let rotationSpeed = determineRotationSpeed(this.sprite, this.attributes);
+    this.sprite.body.rotateLeft(this.rotationSpeed);
   }
 
   turnRight() {
-    console.log('turnRight', 'body', this.attributes.body);
-    // this.sprite.body.rotateRight(this.attributes.body.turnSpeed);
-    // this.sprite.body.angularForce += this.attributes.body.turnSpeed;
-    // this.sprite.body.moveRight(100);
-    this.sprite.body.rotateRight(this.attributes.body.turnSpeed);
+    // console.log('turnRight', 'body', this.attributes.body);
+    // let rotationSpeed = determineRotationSpeed(this.sprite, this.attributes);
+    this.sprite.body.rotateRight(this.rotationSpeed);
   }
 
 }
@@ -638,10 +573,10 @@ class Player extends Car {
     }
 
     if (this.controls.type.isDown(this.controls.input.left)) {
-      console.log('this.controls.input.left.isDown');
+      // console.log('this.controls.input.left.isDown');
       this.turnLeft();
     } else if (this.controls.type.isDown(this.controls.input.right)) {
-      console.log('this.controls.input.right.isDown');
+      // console.log('this.controls.input.right.isDown');
       this.turnRight();
     }
     //  else {
@@ -649,10 +584,10 @@ class Player extends Car {
     // }
 
     if (this.controls.type.isDown(this.controls.input.up)) {
-      console.log('this.controls.input.up.isDown');
+      // console.log('this.controls.input.up.isDown');
       this.thrust();
     } else if (this.controls.type.isDown(this.controls.input.down)) {
-      console.log('this.controls.input.down.isDown');
+      // console.log('this.controls.input.down.isDown');
       this.reverse();
     }
     //  else {
@@ -715,16 +650,16 @@ class Player extends Car {
 
     },
 
-    // attached: function() {
-    //   this.async(this.notifyResize, 1);
-    // },
-    //
-    // get parent() {
-    //   if (this.parentNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
-    //     return this.parentNode.host;
-    //   }
-    //   return this.parentNode;
-    // },
+    attached: function() {
+      this.async(this.notifyResize, 1);
+    },
+
+    get parent() {
+      if (this.parentNode.nodeType === Node.DOCUMENT_FRAGMENT_NODE) {
+        return this.parentNode.host;
+      }
+      return this.parentNode;
+    },
 
     _onIronResize: function() {
       console.log('_onIronResize');
@@ -769,7 +704,8 @@ class Player extends Car {
           _this.components[`Mushroom ${i}`] = new Mushroom({
             name: `Mushroom ${i}`,
             color: '#00ff00',
-            decals: 'dots'
+            decals: 'dots',
+            image: 'sonic'
           }, _this.game);
         }
 
