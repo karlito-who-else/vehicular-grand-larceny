@@ -173,8 +173,32 @@ class Sprite extends Component {
     this.controls = controls;
   }
 
-  update() {
+  constrainVelocity() {
+    if (!this.sprite.body) {
+      return;
+    }
 
+    // console.log('constrainVelocity', this.sprite.body);
+
+    let vx = this.sprite.body.data.velocity[0];
+    let vy = this.sprite.body.data.velocity[1];
+
+    let currVelocitySqr = vx * vx + vy * vy;
+
+    if (currVelocitySqr > this.attributes.properties.maximumVelocity * this.attributes.properties.maximumVelocity) {
+      let angle = Math.atan2(vy, vx);
+
+      vx = Math.cos(angle) * this.attributes.properties.maximumVelocity;
+      vy = Math.sin(angle) * this.attributes.properties.maximumVelocity;
+
+      this.sprite.body.data.velocity[0] = vx;
+      this.sprite.body.data.velocity[1] = vy;
+    }
+
+  }
+
+  update() {
+    this.constrainVelocity();
   }
 
   render() {
@@ -186,22 +210,22 @@ class Sprite extends Component {
   }
 
   get rotationSpeed() {
-    let counter = 0;
+    let increase = (Math.PI / 100);
+    // let increase = (Math.PI / this.attributes.properties.turnSpeed);
 
-    let increase = Math.PI / 100; // 100 iterations
+    let currentSpeedOfMaximum = ((this.averageMagnitude / this.attributes.properties.maximumVelocity) * 100); //percentage
 
-    for (let i = 0; i <= 1; i += 0.01) {
-      let x = i;
-      let y = Math.sin(counter);
+    let rotationSpeed = Math.sin(increase * currentSpeedOfMaximum);
 
-      if (i <= 0.5) {
-        counter += increase;
-      } else {
-        counter += (increase * 0.5);
-      }
-    }
+    console.groupCollapsed('rotationSpeed');
+    console.log('this.averageMagnitude', this.averageMagnitude);
+    console.log('increase', increase);
+    console.log('currentSpeedOfMaximum', currentSpeedOfMaximum);
+    console.log('rotationSpeed', rotationSpeed);
+    console.log('this.attributes.body.turnSpeed', this.attributes.properties.turnSpeed);
+    console.groupEnd();
 
-    let rotationSpeed = Math.abs(this.attributes.body.turnSpeed * this.averageMagnitude);
+    rotationSpeed = (rotationSpeed * this.attributes.properties.turnSpeed);
 
     return rotationSpeed;
   }
@@ -277,11 +301,12 @@ class Vehicle extends Sprite {
       },
       properties: {
         accelerateForwardSpeed: 300,
-        accelerateReverseSpeed: 40,
+        accelerateReverseSpeed: 125,
         brakeSpeed: 80,
         handbrakeSpeed: 60,
+        maximumVelocity: 10,
         turnResetSpeed: 20,
-        turnSpeed: 10
+        turnSpeed: 50
       }
     }, attributes);
 
@@ -304,13 +329,15 @@ class Vehicle extends Sprite {
     super.render();
   }
 
-  handbrake() {
+  handbrake(speed) {
     console.log('SCREEEECH!');
 
+    speed = (parseInt(speed) === speed) ? speed : this.attributes.properties.handbrakeSpeed;
+
     if (this.sprite.body.angularVelocity > 0.1) {
-      this.sprite.body.angularVelocity -= speed ? speed : this.attributes.properties.handbrakeSpeed;
+      this.sprite.body.angularVelocity -= speed;
     } else if (this.sprite.body.angularVelocity < -0.1) {
-      this.sprite.body.angularVelocity += speed ? speed : this.attributes.properties.handbrakeSpeed;
+      this.sprite.body.angularVelocity += speed;
     }
   }
 
@@ -325,28 +352,27 @@ class Vehicle extends Sprite {
   drive(ordinate) {
     // console.log('drive', 'ordinate', ordinate, 'body', this.attributes.body);
     if (ordinate > 0.1) {
-      thrust(ordinate);
+      this.thrust(ordinate);
     } else if (ordinate < -0.1) {
-      reverse(ordinate);
+      this.reverse(ordinate);
     }
   }
 
   thrust(speed) {
-    // console.log('thrust', 'speed', speed, 'body', this.attributes.body);
-    speed ? (parseInt(speed) === speed) : this.attributes.properties.accelerateForwardSpeed;
+    speed = (parseInt(speed) === speed) ? speed : this.attributes.properties.accelerateForwardSpeed;
+    // console.log('speed', speed);
     this.sprite.body.thrust(speed);
   }
 
   reverse(speed) {
-    // console.log('reverse', 'speed', speed, 'body', this.attributes.body);
-    speed ? (parseInt(speed) === speed) : this.attributes.properties.accelerateReverseSpeed;
-    console.log('speed', speed);
+    speed = (parseInt(speed) === speed) ? speed : this.attributes.properties.accelerateReverseSpeed;
+    // console.log('speed', speed);
     this.sprite.body.reverse(speed);
   }
 
   brake(speed) {
-    // console.log('brake', 'speed', speed, 'body', this.attributes.body);
-    speed ? (parseInt(speed) === speed) : this.attributes.properties.brakeSpeed;
+    speed = (parseInt(speed) === speed) ? speed : this.attributes.properties.brakeSpeed;
+    // console.log('speed', speed);
 
     // this.averageMagnitude with direction?
     //
@@ -358,24 +384,26 @@ class Vehicle extends Sprite {
   }
 
   turn(abscissa) {
-    // console.log('turn', 'abscissa', abscissa, 'body', this.attributes.body);
+    console.log('turn', 'abscissa', abscissa);
     if (abscissa > 0.1) {
-      turnLeft(abscissa);
+      this.turnLeft(abscissa);
     } else if (abscissa < -0.1) {
-      turnRight(abscissa);
+      this.turnRight(abscissa);
     }
   }
 
-  turnLeft() {
-    // console.log('turnLeft', 'body', this.attributes.body);
-    // let rotationSpeed = determineRotationSpeed(this.sprite, this.attributes);
-    this.sprite.body.rotateLeft(this.rotationSpeed);
+  turnLeft(speed) {
+    // console.log('turnLeft', 'properties', this.attributes.properties, this.rotationSpeed);
+    this.sprite.body.angularVelocity -= this.attributes.properties.turnSpeed;
+    this.sprite.body.rotateLeft(this.attributes.properties.turnSpeed);
+    // this.sprite.body.rotateLeft(this.rotationSpeed);
   }
 
-  turnRight() {
-    // console.log('turnRight', 'body', this.attributes.body);
-    // let rotationSpeed = determineRotationSpeed(this.sprite, this.attributes);
-    this.sprite.body.rotateRight(this.rotationSpeed);
+  turnRight(speed) {
+    // console.log('turnRight', 'properties', this.attributes.properties, this.rotationSpeed);
+    this.sprite.body.angularVelocity += this.attributes.properties.turnSpeed;
+    this.sprite.body.rotateRight(this.attributes.properties.turnSpeed);
+    // this.sprite.body.rotateRight(this.rotationSpeed);
   }
 
 }
@@ -788,14 +816,12 @@ class Player extends Car {
       }, this);
     },
 
-    resize: function() {
-
-    },
-
     render: function() {
       // this.game.debug.cameraInfo(this.game.camera, 32, 32);
       this.game.debug.spriteInfo(this.components['Player 1'].sprite, 32, 32);
-      // this.game.debug.text('angularVelocity: ' + this.components['Player 1'].sprite.body.angularVelocity, 32, 200);
+      this.game.debug.text('angularVelocity: ' + this.components['Player 1'].sprite.body.angularVelocity, 32, 200);
+      this.game.debug.text('averageMagnitude: ' + this.components['Player 1'].averageMagnitude, 32, 232);
+      this.game.debug.text('rotationSpeed: ' + this.components['Player 1'].rotationSpeed, 32, 264);
       // this.game.debug.text('angularAcceleration: ' + this.components['Player 1'].sprite.body.angularAcceleration, 32, 232);
       // this.game.debug.text('angularDrag: ' + this.components['Player 1'].sprite.body.angularDrag, 32, 264);
       // this.game.debug.text('deltaZ: ' + this.components['Player 1'].sprite.body.deltaZ(), 32, 296);
