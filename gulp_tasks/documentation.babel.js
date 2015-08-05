@@ -3,9 +3,10 @@
 import debug from 'gulp-debug';
 import gulp from 'gulp';
 import jsdoc from 'gulp-jsdoc';
-import reportError from './_report-error.babel.js';
+import plumber from 'gulp-plumber';
 
 import manifest from '../package.json';
+import reportError from './_report-error.babel.js';
 
 import config from './_config.babel.js';
 
@@ -16,6 +17,7 @@ const sourceFiles = [
 
 gulp.task('documentation', () => {
   return gulp.src(sourceFiles)
+    .pipe(plumber())
     .pipe(debug({
       title: 'documentation:'
     }))
@@ -43,6 +45,7 @@ gulp.task('documentation', () => {
         outputSourceFiles: true
       })
     )
+    .pipe(plumber.stop())
     // .pipe(gulp.dest(config.path.destination.documentation))
     .on('error', reportError);
 });

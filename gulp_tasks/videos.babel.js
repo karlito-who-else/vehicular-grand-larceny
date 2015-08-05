@@ -3,14 +3,16 @@
 import debug from 'gulp-debug';
 import ffmpeg from 'gulp-fluent-ffmpeg';
 import gulp from 'gulp';
-import reportError from './_report-error.babel.js';
+import plumber from 'gulp-plumber';
 
 import config from './_config.babel.js';
+import reportError from './_report-error.babel.js';
 
 const sourceFiles = config.files.videos;
 
 gulp.task('videos', () => {
   return gulp.src(sourceFiles)
+    .pipe(plumber())
     .pipe(debug({
       title: 'videos:'
     }))
@@ -33,6 +35,7 @@ gulp.task('videos', () => {
         })
         .on('error', reportError);
     }))
+    .pipe(plumber.stop())
     .pipe(gulp.dest(config.path.destination.base))
     .on('error', reportError);
 });

@@ -6,6 +6,7 @@ import gulp from 'gulp';
 import path from 'path';
 
 import config from './_config.babel.js';
+// import reportError from './_report-error.babel.js';
 
 // Generate a list of files that should be precached when serving from 'dist'.
 // The list will be consumed by the <platinum-sw-cache> element.

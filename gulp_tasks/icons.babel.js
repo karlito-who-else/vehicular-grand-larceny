@@ -2,15 +2,17 @@
 
 import debug from 'gulp-debug';
 import gulp from 'gulp';
+import plumber from 'gulp-plumber';
 import svgSprite from 'gulp-svg-sprite';
-import reportError from './_report-error.babel.js';
 
 import config from './_config.babel.js';
+import reportError from './_report-error.babel.js';
 
 const sourceFiles = config.files.icons;
 
 gulp.task('icons', () => {
   return gulp.src(sourceFiles)
+    .pipe(plumber())
     .pipe(debug({
       title: 'icons:'
     }))
@@ -35,6 +37,7 @@ gulp.task('icons', () => {
         symbol: true // Activate the «symbol» mode
       }
     }))
+    .pipe(plumber.stop())
     .pipe(gulp.dest(config.path.destination.icons))
     .on('error', reportError);
 });

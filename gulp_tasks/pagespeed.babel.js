@@ -3,9 +3,9 @@
 // import debug from 'gulp-debug';
 import gulp from 'gulp';
 import {output as pagespeed} from 'psi';
-import reportError from './_report-error.babel.js';
 
 import config from './_config.babel.js';
+import reportError from './_report-error.babel.js';
 
 gulp.task('pagespeed', cb => {
   pagespeed(config.domain, {

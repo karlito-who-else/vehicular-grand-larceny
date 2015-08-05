@@ -6,9 +6,9 @@ import gulp from 'gulp';
 import path from 'path';
 import swPrecache from 'sw-precache';
 
-import manifest from '../package.json';
-
 import config from './_config.babel.js';
+
+import manifest from '../package.json';
 
 // See http://www.html5rocks.com/en/tutorials/service-worker/introduction/ for
 // an in-depth explanation of what service workers are and why you should care.

@@ -3,14 +3,16 @@
 import debug from 'gulp-debug';
 import dss from 'gulp-dss';
 import gulp from 'gulp';
-import reportError from './_report-error.babel.js';
+import plumber from 'gulp-plumber';
 
 import config from './_config.babel.js';
+import reportError from './_report-error.babel.js';
 
 const sourceFiles = config.files.styles;
 
 gulp.task('styleguide', () => {
   return gulp.src(sourceFiles)
+    .pipe(plumber())
     .pipe(debug({
       title: 'styleguide:'
     }))
@@ -18,6 +20,7 @@ gulp.task('styleguide', () => {
       output: 'index.html',
       templatePath: config.path.source.styleguide + '/templates'
     }))
+    .pipe(plumber.stop())
     .pipe(gulp.dest(config.path.destination.styleguide))
     .on('error', reportError);
 });
