@@ -79,10 +79,10 @@ if [ -f package.json ]; then
 
     fi
 
-    if [ -f ./node_modules/.bin/npm-check-updates ]; then
+    if hash ncu 2>/dev/null; then
       echo "npm-check-updates installed"
       echo "running npm-check-updates"
-      npm run npm-check-updates
+      ncu
     else
       echo "npm-check-updates not installed"
       exit
