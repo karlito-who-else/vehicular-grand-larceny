@@ -1,7 +1,7 @@
 'use strict';
 
-// import car from './entities/car.js';
-// console.log('car', car);
+// import Controls from './entities/Controls.js';
+// console.log('Controls', Controls);
 
 if (!Object.assign) {
   Object.defineProperty(Object, 'assign', {
