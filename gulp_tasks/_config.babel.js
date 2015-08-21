@@ -1,4 +1,6 @@
-'use strict';
+import {
+  create as browserSyncCreate
+} from 'browser-sync';
 
 import fs from 'fs';
 
@@ -6,19 +8,22 @@ import manifest from '../package.json';
 
 const bowerrc = JSON.parse(fs.readFileSync('.bowerrc'));
 
-var config = {
-  domain: manifest.domain,
-  port: {
-    http: process.env.PORT ? process.env.PORT : manifest.config.server.http.port
-  },
-  instance: {
-    pagespeed: {
-      key: ''
-    }
+export const browserSync = browserSyncCreate();
+
+export let config = {};
+
+config.domain = manifest.domain;
+
+config.port = {
+  http: process.env.PORT ? process.env.PORT : manifest.config.server.http.port
+};
+
+config.instance = {
+  pagespeed: {
+    key: ''
   }
 };
 
-// Paths
 config.path = {
   bowerComponents: bowerrc.directory + '/',
   nodeModules: 'node_modules/',
@@ -57,59 +62,61 @@ config.path.destination.styles = config.path.destination.base + '/styles/';
 config.path.destination.styleguide = config.path.destination.base + '/styleguide/';
 config.path.destination.videos = config.path.destination.base + '/videos/';
 
-config.files = {
-  configuration: {
-    json: config.path.root + '{*.json,.*rc}',
-    yaml: config.path.root + '{*.yml,.*.yml}'
-  },
-  documentation: [
-    config.path.source.base + 'README.md'
-  ],
-  icons: [
-    config.path.source.base + '**/*.svg'
-  ],
-  images: [
-    config.path.source.base + '**/*.{gif,jpg,jpeg,png}'
-  ],
-  maps: [
-    config.path.source.base + '**/*.map'
-  ],
-  markup: [
-    config.path.source.base + '**/*.html'
-  ],
-  miscellaneous: [
-    config.path.source.base + '*.{css,ico,json,txt}'
-  ],
-  packages: [
-    config.path.nodeModules + 'apache-server-configs/dist/.htaccess'
-  ],
-  scripts: [
-    // config.path.source.base + '**/!(*-min).js'
-    config.path.source.base + '**/*.js'
-  ],
-  sounds: [
-    config.path.source.base + '**/*.{ogg,pcm,mp3,wav}'
-  ],
-  styles: [
-    config.path.source.base + '**/*.scss'
-  ],
-  tasks: [
-    config.path.root + 'gulpfile.js',
-    config.path.root + 'gulpfile.babel.js',
-    config.path.root + 'gulp_tasks/**/*.js'
-  ],
-  videos: [
-    config.path.source.base + '**/*.{avi,ogg,mov,mp4,mpg,mpeg}'
-  ]
-};
+config.files = {};
 
-// BrowserSync
+config.files.all = [
+  config.path.source.base + '**'
+];
+config.files.configuration = {
+  json: config.path.root + '{*.json,.*rc}',
+  yaml: config.path.root + '{*.yml,.*.yml}'
+};
+config.files.documentation = [
+  config.path.source.base + 'README.md'
+];
+config.files.icons = [
+  config.path.source.base + '**/*.svg'
+];
+config.files.images = [
+  config.path.source.base + '**/*.{gif,jpg,jpeg,png}'
+];
+config.files.maps = [
+  config.path.source.base + '**/*.map'
+];
+config.files.markup = [
+  config.path.source.base + '**/*.html'
+];
+config.files.miscellaneous = [
+  config.path.source.base + '*.{css,ico,json,txt}'
+];
+config.files.packages = [
+  config.path.nodeModules + 'apache-server-configs/dist/.htaccess'
+];
+config.files.scripts = [
+  // config.path.source.base + '**/!(*-min).js'
+  config.path.source.base + '**/*.js'
+];
+config.files.sounds = [
+  config.path.source.base + '**/*.{ogg,pcm,mp3,wav}'
+];
+config.files.styles = [
+  config.path.source.base + '**/*.scss'
+];
+config.files.tasks = [
+  config.path.root + 'gulpfile.js',
+  config.path.root + 'gulpfile.babel.js',
+  config.path.root + 'gulp_tasks/**/*.js'
+];
+config.files.videos = [
+  config.path.source.base + '**/*.{avi,ogg,mov,mp4,mpg,mpeg}'
+];
+
 config.instance.browsersync = {
   browser: ['google chrome'],
   files: [
     config.path.destination.base + '/**',
-    '!' + config.path.destination.styles + config.files.styles,
-    '!' + config.path.destination + config.files.maps
+    '!' + config.path.destination.base + '**/*.scss',
+    '!' + config.path.destination.base + '**/*.map'
   ],
   notify: true,
   open: false,
@@ -122,24 +129,9 @@ config.instance.browsersync = {
       '/node_modules': 'node_modules'
     }
   },
-  // snippetOptions: {
-  //   rule: {
-  //     match: '<span id="browser-sync-binding"></span>',
-  //     fn: function(snippet) {
-  //       // temporary workaround below as browser-sync 2.7.11 tries to inject
-  //       // the client with an incorrect version number appended to the filename
-  //       snippet = '<script async src="/browser-sync/browser-sync-client.js"></script>';
-  //       console.log('snippet', snippet);
-  //       return snippet;
-  //     }
-  //   }
-  // },
   ui: {
     port: manifest.config.server.browsersync.ui.port
   }
 };
 
-var browserSync = require('browser-sync').create();
-
 export default config;
-export {config, browserSync};

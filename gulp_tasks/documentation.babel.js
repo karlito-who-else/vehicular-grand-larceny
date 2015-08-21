@@ -2,8 +2,8 @@
 
 import debug from 'gulp-debug';
 import gulp from 'gulp';
-import jsdoc from 'gulp-jsdoc';
 import plumber from 'gulp-plumber';
+import shell from 'gulp-shell';
 
 import manifest from '../package.json';
 import reportError from './_report-error.babel.js';
@@ -15,40 +15,9 @@ const sourceFiles = [
   config.files.documentation
 ];
 
-gulp.task('documentation', () => {
-  return gulp.src(sourceFiles)
-    .pipe(plumber())
-    .pipe(debug({
-      title: 'documentation:'
-    }))
-    .pipe(jsdoc.parser({
-      name: manifest.name,
-      description: manifest.description,
-      version: manifest.version,
-      license: manifest.license,
-      plugins: ['plugins/markdown']
-    }, manifest.name))
-    .pipe(jsdoc.generator(config.path.destination.documentation, {
-        path: 'ink-docstrap',
-        systemName: manifest.name,
-        footer: 'For more information, see https://github.com/karlito-who-else/grid/wiki',
-        copyright: '&copy; copyright ' + new Date().getFullYear(),
-        navType: 'vertical',
-        theme: 'journal',
-        linenums: true,
-        collapseSymbols: false,
-        inverseNav: false
-      }, {
-        'private': false,
-        monospaceLinks: false,
-        cleverLinks: false,
-        outputSourceFiles: true
-      })
-    )
-    .pipe(plumber.stop())
-    // .pipe(gulp.dest(config.path.destination.documentation))
-    .on('error', reportError);
-});
+gulp.task('documentation', shell.task([
+  '../node_modules/jsdoc/jsdoc .'
+]));
 
 gulp.task('documentation:watch', function() {
   gulp.watch(sourceFiles, ['documentation']);
